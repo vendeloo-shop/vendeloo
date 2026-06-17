@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Vendeloo · Tu catálogo para vender por WhatsApp',
+  title: 'Vendeloo · Tu catálogo para vender por redes sociales',
 };
 
 function Logo({ size = 40 }: { size?: number }) {
@@ -28,8 +28,8 @@ function Logo({ size = 40 }: { size?: number }) {
 
 const pasos = [
   { n: '01', t: 'Arma tu catálogo', d: 'Subes tus fotos, pones precios y eliges una plantilla bonita. Listo en minutos.' },
-  { n: '02', t: 'Comparte tu link', d: 'Te damos un link con tu marca. Lo mandas a tus contactos por WhatsApp.' },
-  { n: '03', t: 'Vendes directo', d: 'Cada interesado te escribe a tu WhatsApp. Sin intermediarios, sin comisiones por venta.' },
+  { n: '02', t: 'Comparte tu link', d: 'Te damos un link con tu marca. Lo compartes en tus redes: WhatsApp, Instagram, TikTok o Facebook.' },
+  { n: '03', t: 'Vendes directo', d: 'Cada interesado te contacta directo. Sin intermediarios, sin comisiones por venta.' },
 ];
 
 export default function Home() {
@@ -44,31 +44,32 @@ export default function Home() {
         }}
       >
         <div className="wrap">
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, marginBottom: 30 }}>
             <span
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 54,
-                height: 54,
+                width: 66,
+                height: 66,
                 background: '#fff',
-                borderRadius: 16,
-                boxShadow: '0 10px 24px rgba(7,26,82,.28)',
+                borderRadius: 18,
+                boxShadow: '0 12px 28px rgba(7,26,82,.30)',
               }}
             >
-              <Logo size={36} />
+              <Logo size={46} />
             </span>
-            <span style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 23, letterSpacing: '-.01em' }}>
+            <span style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 27, letterSpacing: '-.01em' }}>
               Vendeloo
             </span>
           </div>
           <h1 style={{ fontSize: 'clamp(34px, 7vw, 58px)', maxWidth: 720, color: '#fff' }}>
-            Tu propio catálogo para vender por WhatsApp.
+            Tu propio catálogo para vender por redes sociales.
           </h1>
-          <p style={{ fontSize: 19, opacity: 0.95, maxWidth: 540, marginTop: 18 }}>
+          <p style={{ fontSize: 19, opacity: 0.95, maxWidth: 560, marginTop: 18 }}>
             Mudanza, venta de garaje o tu negocio: arma un catálogo con tu marca y
-            compártelo con tus contactos. Tú pones el precio, tú cierras la venta.
+            compártelo donde están tus clientes — WhatsApp, Instagram, TikTok o Facebook.
+            Tú pones el precio, tú cierras la venta.
           </p>
           <div style={{ display: 'flex', gap: 12, marginTop: 30, flexWrap: 'wrap' }}>
             <Link className="btn" style={{ background: '#fff', color: '#1565FF' }} href="/alta">
