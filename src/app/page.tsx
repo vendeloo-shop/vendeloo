@@ -6,19 +6,22 @@ export const metadata = {
 
 function Logo({ size = 40 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Vendeloo">
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Vendeloo">
       <defs>
-        <linearGradient id="vgrad" x1="6" y1="8" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+        <linearGradient id="vgrad" x1="12" y1="14" x2="52" y2="52" gradientUnits="userSpaceOnUse">
           <stop stopColor="#1565FF" />
           <stop offset="1" stopColor="#6D3DFF" />
         </linearGradient>
       </defs>
-      <path d="M16 13a8 8 0 0 1 16 0" stroke="url(#vgrad)" strokeWidth="3.4" strokeLinecap="round" />
-      <path d="M9 16 L24 41 L39 16" stroke="url(#vgrad)" strokeWidth="5.6" strokeLinecap="round" strokeLinejoin="round" />
-      <g transform="rotate(45 34 18)">
-        <rect x="29" y="13" width="10" height="10" rx="2.4" fill="url(#vgrad)" />
-        <circle cx="31.4" cy="15.4" r="1.25" fill="#fff" />
+      <path d="M14 17 L30 49 L48 17" stroke="url(#vgrad)" strokeWidth="8.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M20 38 Q31 49 44 34" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
+      <g transform="rotate(45 43 24)">
+        <rect x="37" y="18" width="12" height="12" rx="3" fill="#6D3DFF" />
+        <circle cx="40" cy="21" r="1.5" fill="#fff" />
       </g>
+      <path d="M24 16 C24 6 38 6 38 16" stroke="#071A52" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="24" cy="16" r="2.2" fill="#071A52" />
+      <circle cx="38" cy="16" r="2.2" fill="#071A52" />
     </svg>
   );
 }
@@ -47,14 +50,14 @@ export default function Home() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 48,
-                height: 48,
+                width: 54,
+                height: 54,
                 background: '#fff',
-                borderRadius: 14,
+                borderRadius: 16,
                 boxShadow: '0 10px 24px rgba(7,26,82,.28)',
               }}
             >
-              <Logo size={31} />
+              <Logo size={36} />
             </span>
             <span style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 23, letterSpacing: '-.01em' }}>
               Vendeloo
