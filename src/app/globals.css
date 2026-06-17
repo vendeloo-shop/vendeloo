@@ -1,17 +1,19 @@
 /* ============================================================
-   VENDELOO · Sistema de diseño base — plantilla "Vibrante"
-   Coral, redondeado, look de app joven.
+   VENDELOO · Sistema de diseño base
+   Azul/morado, moderno y tecnológico (Manual de Marca).
    ============================================================ */
 :root {
-  /* Marca / Vibrante */
-  --coral: #FF6B5E;
-  --coral-deep: #ED4F40;
-  --coral-soft: #FFE7E2;
-  --ink: #221B19;
-  --ink-soft: #6E635E;
-  --paper: #FFF8F5;
+  /* Marca Vendeloo */
+  --blue: #1565FF;
+  --blue-deep: #0E4ED9;
+  --blue-soft: #E7EFFF;
+  --purple: #6D3DFF;
+  --navy: #071A52;
+  --ink: #0E1B3A;
+  --ink-soft: #5A6A8C;
+  --paper: #F5F8FF;
   --card: #FFFFFF;
-  --line: #F0E4DF;
+  --line: #E5EAF6;
 
   /* Estados de artículo */
   --ok: #11936A;     /* disponible */
@@ -25,16 +27,16 @@
   --r-card: 22px;
   --r-btn: 14px;
   --r-pill: 999px;
-  --shadow: 0 1px 2px rgba(34,27,25,.04), 0 8px 24px rgba(34,27,25,.06);
-  --shadow-lift: 0 2px 6px rgba(34,27,25,.06), 0 18px 40px rgba(237,79,64,.10);
+  --shadow: 0 1px 2px rgba(14,27,58,.05), 0 8px 24px rgba(14,27,58,.07);
+  --shadow-lift: 0 2px 6px rgba(14,27,58,.06), 0 18px 40px rgba(21,101,255,.14);
 
   /* Tipografía (cargada por <link> en el layout) */
-  --display: 'Sora', system-ui, sans-serif;
-  --body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --display: 'Montserrat', system-ui, sans-serif;
+  --body: 'Poppins', system-ui, sans-serif;
 
   /* Accent dinámico por vendedor (lo sobreescribe el theme) */
-  --accent: var(--coral);
-  --accent-deep: var(--coral-deep);
+  --accent: var(--blue);
+  --accent-deep: var(--blue-deep);
 }
 
 * { box-sizing: border-box; }
@@ -63,7 +65,7 @@ button { font-family: inherit; }
   transition: transform .12s ease, background .15s ease, box-shadow .15s ease;
 }
 .btn:active { transform: translateY(1px); }
-.btn--primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(237,79,64,.28); }
+.btn--primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(21,101,255,.30); }
 .btn--primary:hover { background: var(--accent-deep); }
 .btn--ghost { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
 .btn--ghost:hover { border-color: var(--accent); color: var(--accent-deep); }
@@ -89,7 +91,7 @@ button { font-family: inherit; }
   display: flex; flex-direction: column;
 }
 .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
-.card__media { position: relative; aspect-ratio: 4/3; background: var(--coral-soft); overflow: hidden; }
+.card__media { position: relative; aspect-ratio: 4/3; background: var(--blue-soft); overflow: hidden; }
 .card__media img { width: 100%; height: 100%; object-fit: cover; }
 .card__badge { position: absolute; top: 12px; left: 12px; }
 .card__body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
