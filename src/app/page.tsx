@@ -21,7 +21,7 @@ export default function Home() {
     each('.tocrear',function(a:any){ a.addEventListener('click',function(e:any){ e.preventDefault(); doc.getElementById('precios').scrollIntoView({behavior:'smooth'}); }); });
     each('.verej',function(a:any){ a.addEventListener('click',function(e:any){ e.preventDefault(); doc.getElementById('ejemplos').scrollIntoView({behavior:'smooth'}); }); });
     each('.cat',function(c:any){ c.addEventListener('click',function(){ openCat(parseInt(c.getAttribute('data-i'),10)); }); });
-    each('.planbtn',function(b:any){ b.addEventListener('click',function(){ doc.getElementById('selplan').textContent=b.getAttribute('data-plan'); show('planmodal'); }); });
+    each('.planbtn',function(b:any){ b.addEventListener('click',function(){ var pm:any={'Básico':'basico','Medio':'medio','Grande':'grande'}; win.location.href='/alta?plan='+(pm[b.getAttribute('data-plan')]||'medio'); }); });
     var entrar=doc.getElementById('entrar'); if(entrar) entrar.addEventListener('click',function(){ show('loginmodal'); });
     each('[href="#contacto"]',function(a:any){ a.addEventListener('click',function(e:any){ e.preventDefault(); show('contactmodal'); }); });
     each('[data-close]',function(x:any){ x.addEventListener('click',function(){ hide(x.getAttribute('data-close')); }); });
