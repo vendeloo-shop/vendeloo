@@ -1,139 +1,41 @@
-import Link from 'next/link';
-
-export const metadata = {
-  title: 'Vendeloo · Tu catálogo para vender por redes sociales',
-};
-
-function Logo({ size = 40 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Vendeloo">
-      <defs>
-        <linearGradient id="vgrad" x1="12" y1="14" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#1565FF" />
-          <stop offset="1" stopColor="#6D3DFF" />
-        </linearGradient>
-      </defs>
-      <path d="M14 17 L30 49 L48 17" stroke="url(#vgrad)" strokeWidth="8.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M20 38 Q31 49 44 34" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
-      <g transform="rotate(45 43 24)">
-        <rect x="37" y="18" width="12" height="12" rx="3" fill="#6D3DFF" />
-        <circle cx="40" cy="21" r="1.5" fill="#fff" />
-      </g>
-      <path d="M24 16 C24 6 38 6 38 16" stroke="#071A52" strokeWidth="3" strokeLinecap="round" />
-      <circle cx="24" cy="16" r="2.2" fill="#071A52" />
-      <circle cx="38" cy="16" r="2.2" fill="#071A52" />
-    </svg>
-  );
-}
-
-const pasos = [
-  { n: '01', t: 'Arma tu catálogo', d: 'Subes tus fotos, pones precios y eliges una plantilla bonita. Listo en minutos.' },
-  { n: '02', t: 'Comparte tu link', d: 'Te damos un link con tu marca. Lo compartes en tus redes: WhatsApp, Instagram, TikTok o Facebook.' },
-  { n: '03', t: 'Vendes directo', d: 'Cada interesado te contacta directo. Sin intermediarios, sin comisiones por venta.' },
-];
+'use client';
+import { useEffect } from 'react';
 
 export default function Home() {
-  return (
-    <main>
-      {/* Hero */}
-      <section
-        style={{
-          background: 'linear-gradient(135deg, #1565FF 0%, #6D3DFF 100%)',
-          color: '#fff',
-          padding: '72px 0 84px',
-        }}
-      >
-        <div className="wrap">
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 14, marginBottom: 30 }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 66,
-                height: 66,
-                background: '#fff',
-                borderRadius: 18,
-                boxShadow: '0 12px 28px rgba(7,26,82,.30)',
-              }}
-            >
-              <Logo size={46} />
-            </span>
-            <span style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 27, letterSpacing: '-.01em' }}>
-              Vendeloo
-            </span>
-          </div>
-          <h1 style={{ fontSize: 'clamp(34px, 7vw, 58px)', maxWidth: 720, color: '#fff' }}>
-            Tu propio catálogo para vender por redes sociales.
-          </h1>
-          <p style={{ fontSize: 19, opacity: 0.95, maxWidth: 560, marginTop: 18 }}>
-            Mudanza, venta de garaje o tu negocio: arma un catálogo con tu marca y
-            compártelo donde están tus clientes — WhatsApp, Instagram, TikTok o Facebook.
-            Tú pones el precio, tú cierras la venta.
-          </p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 30, flexWrap: 'wrap' }}>
-            <Link className="btn" style={{ background: '#fff', color: '#1565FF' }} href="/alta">
-              Quiero mi catálogo
-            </Link>
-            <Link
-              className="btn"
-              style={{ background: 'rgba(255,255,255,.14)', color: '#fff', border: '1.5px solid rgba(255,255,255,.55)' }}
-              href="/app"
-            >
-              Ya tengo cuenta
-            </Link>
-          </div>
-        </div>
-      </section>
+  useEffect(function () {
+    var doc:any=document, win:any=window;
+    if (win.__vlInit) return; win.__vlInit = true;
+    var DATA = [
+      {nm:'El Clóset de Caro',sub:'Ropa y accesorios',gr:'linear-gradient(135deg,#1565FF,#6D3DFF)',items:[{n:'Chaqueta de cuero',p:'$120.000',id:'1551028719-00167b16eac5'},{n:'Zapatos de cuero',p:'$85.000',id:'1605733160314-4fc7dac4bb16'},{n:'Bolso de mano',p:'$75.000',id:'1598532163257-ae3c6b2524b6'},{n:'Vestido',p:'$60.000',id:'1595777457583-95e059d581b8'}]},
+      {nm:'Estudio Lumen',sub:'Arte y decoración',gr:'linear-gradient(135deg,#6D3DFF,#9b6bff)',items:[{n:'Cuadro abstracto',p:'$180.000',id:'1579783928621-7a13d66a62d1'},{n:'Lámpara de mesa',p:'$95.000',id:'1517991104123-1d56a6e81ed9'},{n:'Cuadro enmarcado',p:'$140.000',id:'1578301978693-85fa9c0320b9'},{n:'Planta decorativa',p:'$45.000',id:'1503149779833-1de50ebe5f8a'}]},
+      {nm:'TecnoCambio',sub:'Tecnología de segunda',gr:'linear-gradient(135deg,#0E4ED9,#1565FF)',items:[{n:'Laptop usada',p:'$850.000',id:'1496181133206-80ce9b88a853'},{n:'Audífonos inalámbricos',p:'$120.000',id:'1505740420928-5e560c06d30e'},{n:'Portátil ligero',p:'$700.000',id:'1773332585788-9104ec6f38ef'},{n:'Audífonos pro',p:'$90.000',id:'1618366712010-f4ae9c647dcb'}]},
+      {nm:'Rincón Vintage',sub:'Muebles y hogar',gr:'linear-gradient(135deg,#3b2bd0,#1565FF)',items:[{n:'Sofá de 2 puestos',p:'$450.000',id:'1555041469-a586c61ea9bc'},{n:'Silla de madera',p:'$80.000',id:'1598300042247-d088f8ab3a91'},{n:'Mesa de comedor',p:'$260.000',id:'1604578762246-41134e37f9cc'},{n:'Lámpara de pie',p:'$70.000',id:'1585128719715-46776b56a0d1'}]},
+      {nm:'La Mudanza de Ana',sub:'Todo de casa',gr:'linear-gradient(135deg,#1565FF,#3aa0ff)',items:[{n:'Silla de madera',p:'$70.000',id:'1506439773649-6e0eb8cfb237'},{n:'Mesa de comedor',p:'$240.000',id:'1600623050499-84929aad17c9'},{n:'Sofá',p:'$400.000',id:'1512212621149-107ffe572d2f'},{n:'Vajilla completa',p:'$55.000',id:'1738484708927-c1f45df0b56e'}]}
+    ];
+    function P(id:any,w:any,h:any){ return 'https://images.unsplash.com/photo-'+id+'?auto=format&fit=crop&w='+w+'&h='+h+'&q=72'; }
+    function show(id:any){ var e=doc.getElementById(id); if(e) e.style.display='flex'; }
+    function hide(id:any){ var e=doc.getElementById(id); if(e) e.style.display='none'; }
+    function each(sel:any,fn:any){ var l=doc.querySelectorAll(sel); for(var k=0;k<l.length;k++) fn(l[k]); }
+    function openCat(i:any){ var d=DATA[i]; var prods=d.items.map(function(it:any){ return '<div class="cp"><div class="cpimg" style="background-image:url('+P(it.id,400,300)+')"><span class="badge">Disponible</span></div><div class="cpb"><div class="cpn">'+it.n+'</div><div class="cpp">'+it.p+'</div><button class="btn btn--wa">Preguntar por WhatsApp</button></div></div>'; }).join(''); doc.getElementById('catbody').innerHTML='<div class="catcover" style="background:'+d.gr+'"><h4>'+d.nm+'</h4><span>'+d.sub+' · escríbeme</span><button class="btn btn--wa" style="width:auto">Chatea por WhatsApp</button></div><div class="catgrid">'+prods+'</div>'; show('catalog'); }
 
-      {/* Cómo funciona */}
-      <section className="wrap" style={{ padding: '64px 20px' }}>
-        <h2 style={{ fontSize: 'clamp(24px, 4vw, 34px)', marginBottom: 8 }}>Cómo funciona</h2>
-        <p style={{ color: 'var(--ink-soft)', maxWidth: 480, marginBottom: 36 }}>
-          Tres pasos. Sin apps que instalar, sin tienda física.
-        </p>
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
-          {pasos.map((p) => (
-            <div
-              key={p.n}
-              style={{
-                background: 'var(--card)',
-                borderRadius: 'var(--r-card)',
-                padding: '26px 24px',
-                boxShadow: 'var(--shadow)',
-              }}
-            >
-              <div style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 15, color: 'var(--blue)' }}>
-                {p.n}
-              </div>
-              <h3 style={{ fontSize: 20, margin: '10px 0 8px' }}>{p.t}</h3>
-              <p style={{ color: 'var(--ink-soft)', fontSize: 15 }}>{p.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+    each('.tocrear',function(a:any){ a.addEventListener('click',function(e:any){ e.preventDefault(); doc.getElementById('precios').scrollIntoView({behavior:'smooth'}); }); });
+    each('.verej',function(a:any){ a.addEventListener('click',function(e:any){ e.preventDefault(); doc.getElementById('ejemplos').scrollIntoView({behavior:'smooth'}); }); });
+    each('.cat',function(c:any){ c.addEventListener('click',function(){ openCat(parseInt(c.getAttribute('data-i'),10)); }); });
+    each('.planbtn',function(b:any){ b.addEventListener('click',function(){ doc.getElementById('selplan').textContent=b.getAttribute('data-plan'); show('planmodal'); }); });
+    var entrar=doc.getElementById('entrar'); if(entrar) entrar.addEventListener('click',function(){ show('loginmodal'); });
+    each('[href="#contacto"]',function(a:any){ a.addEventListener('click',function(e:any){ e.preventDefault(); show('contactmodal'); }); });
+    each('[data-close]',function(x:any){ x.addEventListener('click',function(){ hide(x.getAttribute('data-close')); }); });
+    each('.modal',function(m:any){ m.addEventListener('click',function(e:any){ if(e.target===m) hide(m.id); }); });
+    var LEAD='vendeloo.app@gmail.com';
+    var pe=doc.getElementById('planenviar'); if(pe) pe.addEventListener('click',function(){ var plan=doc.getElementById('selplan').textContent; var f=doc.querySelectorAll('#planmodal input, #planmodal select'); var labels=['Nombre del catalogo','Telefono WhatsApp','Correo','Tipo de documento','Numero de documento']; var body='Plan: '+plan+'%0A'; for(var k=0;k<f.length;k++){ if(f[k].type==='password') continue; body+=(labels[k]||'Campo')+': '+encodeURIComponent(f[k].value)+'%0A'; } win.location.href='mailto:'+LEAD+'?subject='+encodeURIComponent('Solicitud de catalogo - '+plan)+'&body='+body; hide('planmodal'); });
+    var cs=doc.getElementById('csend'); if(cs) cs.addEventListener('click',function(){ var f=doc.querySelectorAll('#contactmodal input'); var labels=['Nombre','Telefono WhatsApp','Correo','Mensaje']; var body=''; for(var k=0;k<f.length;k++){ body+=(labels[k]||'Campo')+': '+encodeURIComponent(f[k].value)+'%0A'; } win.location.href='mailto:'+LEAD+'?subject='+encodeURIComponent('Contacto desde Vendeloo')+'&body='+body; hide('contactmodal'); });
+    var lb=doc.getElementById('loginbtn'); if(lb) lb.addEventListener('click',function(){ alert('Tu panel estará disponible muy pronto.'); });
+    var tr=doc.getElementById('track'); var al=doc.getElementById('arl'); if(al&&tr) al.addEventListener('click',function(){ tr.scrollBy({left:-270,behavior:'smooth'}); }); var ar=doc.getElementById('arr'); if(ar&&tr) ar.addEventListener('click',function(){ tr.scrollBy({left:270,behavior:'smooth'}); });
+    var tbl:any={ COP:['$130.000','$180.000','$230.000'], USD:['US$30','US$42','US$53'], EUR:['28 EUR','38 EUR','49 EUR'] }; var sel=doc.getElementById('cursel'); var pn=doc.querySelectorAll('#precios .plan .price'); if(sel) sel.addEventListener('change',function(e:any){ var v=tbl[e.target.value]; for(var k=0;k<pn.length;k++){ if(v[k]) pn[k].textContent=v[k]; } });
+    try { if(!win.localStorage.getItem('vl_ck')){ var bar=doc.createElement('div'); bar.id='ckbar'; bar.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:720px;z-index:60;background:#fff;border:1px solid #E8ECF7;box-shadow:0 14px 44px rgba(7,26,82,.20);border-radius:16px;padding:15px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-family:Poppins,sans-serif;font-size:13.5px;color:#0E1B3A'; bar.innerHTML='<div style="flex:1;min-width:220px;line-height:1.45">Usamos cookies para que Vendeloo funcione y para mejorar tu experiencia.</div><button id="ckno" style="border:1.5px solid #E8ECF7;background:#fff;border-radius:10px;padding:9px 16px;font-weight:700;font-family:Montserrat;cursor:pointer">Rechazar</button><button id="ckyes" style="border:0;background:linear-gradient(135deg,#1565FF,#6D3DFF);color:#fff;border-radius:10px;padding:9px 18px;font-weight:700;font-family:Montserrat;cursor:pointer">Aceptar</button>'; doc.body.appendChild(bar); var done=function(){ try{win.localStorage.setItem('vl_ck','1');}catch(e){} bar.remove(); }; doc.getElementById('ckyes').onclick=done; doc.getElementById('ckno').onclick=done; } } catch(e){}
 
-      {/* CTA final */}
-      <section className="wrap" style={{ padding: '0 20px 80px' }}>
-        <div
-          style={{
-            background: 'linear-gradient(135deg, #071A52 0%, #1565FF 100%)',
-            color: '#fff',
-            borderRadius: 'var(--r-card)',
-            padding: 'clamp(32px, 6vw, 56px)',
-            textAlign: 'center',
-          }}
-        >
-          <h2 style={{ color: '#fff', fontSize: 'clamp(24px, 4vw, 32px)', maxWidth: 460, margin: '0 auto 20px' }}>
-            ¿Tienes cosas para vender? Móntalo hoy.
-          </h2>
-          <Link className="btn" style={{ background: '#fff', color: '#1565FF' }} href="/alta">Empezar ahora</Link>
-        </div>
-      </section>
-
-      <footer style={{ textAlign: 'center', padding: '0 20px 48px', color: 'var(--ink-soft)', fontSize: 13 }}>
-        © {new Date().getFullYear()} Vendeloo
-      </footer>
-    </main>
-  );
+  }, []);
+  var CSS = ":root{--blue:#1565FF;--purple:#6D3DFF;--navy:#071A52;--ink:#0E1B3A;--soft:#5A6A8C;--line:#E8ECF7;--bg:#F7F9FF}*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}body{font-family:Poppins,system-ui,sans-serif;color:var(--ink);background:#fff;line-height:1.55}h1,h2,h3{font-family:Montserrat,system-ui,sans-serif;letter-spacing:-.02em;line-height:1.1}a{text-decoration:none;color:inherit}.wrap{max-width:1080px;margin:0 auto;padding:0 22px}#como,#ejemplos,#precios{scroll-margin-top:112px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:Montserrat;font-weight:700;font-size:15px;padding:12px 20px;border-radius:13px;border:0;cursor:pointer}.btn--grad{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 8px 20px rgba(21,101,255,.28)}.btn--ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}.btn--wa{background:#25D366;color:#073d22;font-size:13px;padding:9px 14px;border-radius:10px;width:100%}.nav{position:sticky;top:0;z-index:9;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}.nav .wrap{display:flex;align-items:center;gap:18px;height:96px}.nav .menu{display:flex;gap:26px;margin-left:14px;color:var(--soft);font-size:15px;font-weight:500}.nav .menu a{cursor:pointer}.nav .menu a:hover{color:var(--blue)}.nav .right{margin-left:auto;display:flex;gap:10px;align-items:center}.hero{padding:60px 0 40px}.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}.hero h1{font-size:clamp(34px,5vw,52px);font-weight:800}.hero h1 .g{background:linear-gradient(135deg,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{color:var(--soft);font-size:18px;margin:18px 0 28px;max-width:540px}.hero .cta{display:flex;gap:12px;flex-wrap:wrap}.trust{margin-top:20px;color:var(--soft);font-size:14px}.phone{justify-self:center;width:280px;height:560px;background:#fff;border:10px solid #0E1B3A;border-radius:42px;box-shadow:0 30px 60px rgba(7,26,82,.25);overflow:hidden}.phone .cover{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:26px 18px 16px;text-align:center}.phone .cover h4{font-family:Montserrat;font-size:18px;font-weight:800}.phone .cover span{font-size:12px;opacity:.9}.cards{padding:14px;display:grid;gap:12px}.pc{border:1px solid var(--line);border-radius:16px;overflow:hidden}.pc .img{height:96px;background-size:cover;background-position:center;position:relative}.pc .badge{position:absolute;top:8px;left:8px;font-family:Montserrat;font-weight:700;font-size:10px;background:#DFF3EC;color:#11936A;padding:3px 8px;border-radius:99px}.pc .body{padding:9px 11px}.pc .name{font-family:Montserrat;font-weight:700;font-size:13px}.pc .price{font-family:Montserrat;font-weight:800;font-size:15px;margin:2px 0 8px}section.block{padding:60px 0}.eyebrow{font-family:Montserrat;font-weight:800;font-size:13px;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}.h2{font-size:clamp(26px,3.4vw,38px);font-weight:800;margin:8px 0 10px}.lead{color:var(--soft);max-width:560px;margin-bottom:30px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.step{background:#fff;border:1px solid var(--line);border-radius:20px;padding:26px 22px}.step .n{font-family:Montserrat;font-weight:800;color:var(--blue);font-size:14px}.step h3{font-size:19px;margin:8px 0 6px}.step p{color:var(--soft);font-size:14px}.carousel{position:relative}.track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 16px;scroll-behavior:smooth}.cat{flex:0 0 250px;scroll-snap-align:start;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;cursor:pointer;transition:transform .15s,box-shadow .15s}.cat:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(7,26,82,.14)}.cat .cv{height:150px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:14px}.cat .ov b{font-family:Montserrat;font-weight:800;color:#fff;font-size:16px;display:block;text-shadow:0 1px 4px rgba(0,0,0,.4)}.cat .ov span{color:#fff;font-size:12px;opacity:.95;text-shadow:0 1px 4px rgba(0,0,0,.4)}.cat .cf{padding:12px 14px;font-family:Montserrat;font-weight:700;font-size:13px;color:var(--blue)}.arrow{position:absolute;top:36%;width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px rgba(7,26,82,.14);cursor:pointer;font-size:18px;font-weight:700;color:var(--ink);z-index:2}.arrow.l{left:-10px}.arrow.r{right:-10px}.pricing{background:var(--bg)}.plan{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px 24px;display:flex;flex-direction:column}.plan.feat{border:2px solid var(--blue);box-shadow:0 18px 40px rgba(21,101,255,.14);position:relative}.plan.feat .tag{position:absolute;top:-12px;left:24px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-family:Montserrat;font-weight:700;font-size:11px;padding:5px 12px;border-radius:99px}.plan h3{font-family:Montserrat;font-size:20px;font-weight:800}.plan .price{font-family:Montserrat;font-weight:800;font-size:34px;margin:10px 0 2px}.plan .per{color:var(--soft);font-size:13px;margin-bottom:16px}.plan ul{list-style:none;padding:0;margin:0 0 22px;display:grid;gap:9px}.plan li{font-size:14px;padding-left:24px;position:relative}.plan li:before{content:\"✓\";position:absolute;left:0;color:var(--blue);font-weight:800}.plan .btn{margin-top:auto}.ctaband{padding:64px 0}.ctaband .box{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:26px;padding:52px 28px;text-align:center}.ctaband h2{font-size:clamp(26px,3.4vw,36px);font-weight:800;color:#fff;margin-bottom:18px}footer{border-top:1px solid var(--line);padding:48px 0}footer .wrap{display:flex;gap:36px;align-items:center;flex-wrap:wrap}footer img{height:170px;display:block}footer a{color:var(--soft)}.fcol{display:flex;flex-direction:column;gap:10px}.frow{display:flex;gap:20px;flex-wrap:wrap}.fcop{color:var(--soft);font-size:14px}.fld{margin-bottom:14px}.fld label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}.fld input,.fld select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;font-family:Poppins;font-size:15px}.modal{display:none;position:fixed;inset:0;background:rgba(7,26,82,.5);z-index:50;align-items:center;justify-content:center;padding:20px}.modal .card{background:#fff;border-radius:22px;padding:30px 26px;width:400px;max-width:94vw;position:relative;max-height:92vh;overflow:auto}.modal h3{font-size:22px;margin-bottom:6px}.modal p{color:var(--soft);font-size:14px;margin-bottom:18px}.modal .x{position:absolute;top:12px;right:14px;font-size:24px;color:#fff;cursor:pointer;background:rgba(0,0,0,.25);border:0;width:34px;height:34px;border-radius:50%;z-index:3}.selbar{background:#EAF0FF;border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:16px}.selbar b{color:var(--blue);font-family:Montserrat}.catcard{background:#fff;border-radius:22px;width:460px;max-width:94vw;max-height:92vh;overflow:auto;position:relative;padding:0}.catcover{padding:26px 22px 20px;color:#fff;text-align:center}.catcover h4{font-family:Montserrat;font-weight:800;font-size:22px}.catcover span{font-size:13px;opacity:.92;display:block;margin:2px 0 12px}.catgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}.cp{border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}.cpimg{height:104px;background-size:cover;background-position:center;position:relative}.cp .badge{position:absolute;top:8px;left:8px;font-family:Montserrat;font-weight:700;font-size:10px;background:#DFF3EC;color:#11936A;padding:3px 8px;border-radius:99px}.cpb{padding:9px 11px;display:flex;flex-direction:column;flex:1}.cpn{font-family:Montserrat;font-weight:700;font-size:13px}.cpp{font-family:Montserrat;font-weight:800;font-size:15px;margin:2px 0 8px}.cpb .btn{margin-top:auto}@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.nav .menu{display:none}.phone{order:-1}footer img{height:130px}}";
+  var BODY = "<nav class=\"nav\"><div class=\"wrap\"><a href=\"#top\"><img src=\"/Vendeloo_horizontal.png\" alt=\"Vendeloo\" style=\"height:80px;display:block\"></a><div class=\"menu\"><a href=\"#como\">Cómo funciona</a><a href=\"#ejemplos\">Ejemplos</a><a href=\"#precios\">Precios</a><a href=\"#contacto\">Contacto</a></div><div class=\"right\"><button class=\"btn btn--ghost\" id=\"entrar\">Entrar</button><a class=\"btn btn--grad tocrear\" href=\"#precios\">Crear mi catálogo</a></div></div></nav><section class=\"hero\" id=\"top\"><div class=\"wrap\"><div><h1>Vende lo que ya no usas, <span class=\"g\">sin abrir una tienda</span>.</h1><p>¿Mudanza, limpieza de armario o cosas guardadas que ya no necesitas? Arma un catálogo con fotos y precios, compártelo en WhatsApp, Instagram, TikTok o Facebook, y vende directo a tus contactos. Tú pones el precio y cierras la venta. Sin comisiones y sin montar ninguna tienda.</p><div class=\"cta\"><a class=\"btn btn--grad tocrear\" href=\"#precios\">Crear mi catálogo</a><a class=\"btn btn--ghost verej\" href=\"#ejemplos\">Ver un ejemplo</a></div><div class=\"trust\">★★★★★ Listo en minutos · sin instalar nada</div></div><div class=\"phone\"><div class=\"cover\"><h4 style=\"margin-top:8px\">El Clóset de Caro</h4><span>Ropa y accesorios · escríbeme</span></div><div class=\"cards\"><div class=\"pc\"><div class=\"img\" style=\"background-image:url(https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&h=260&q=72)\"><span class=\"badge\">Disponible</span></div><div class=\"body\"><div class=\"name\">Chaqueta de cuero</div><div class=\"price\">$120.000</div><button class=\"btn btn--wa\">Preguntar por WhatsApp</button></div></div><div class=\"pc\"><div class=\"img\" style=\"background-image:url(https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=400&h=260&q=72)\"><span class=\"badge\">Disponible</span></div><div class=\"body\"><div class=\"name\">Zapatos de cuero</div><div class=\"price\">$85.000</div><button class=\"btn btn--wa\">Preguntar por WhatsApp</button></div></div></div></div></div></section><section class=\"block\" id=\"como\"><div class=\"wrap\"><div class=\"eyebrow\">Cómo funciona</div><div class=\"h2\">Tres pasos y a vender</div><p class=\"lead\">Sin apps que instalar, sin tienda física, sin saber de tecnología.</p><div class=\"grid3\"><div class=\"step\"><div class=\"n\">01</div><h3>Arma tu catálogo</h3><p>Subes fotos, pones precios y eliges una plantilla bonita. Listo en minutos.</p></div><div class=\"step\"><div class=\"n\">02</div><h3>Comparte tu link</h3><p>Te damos tu link en vendeloo.shop/tunombre. Lo pegas en WhatsApp, Instagram, TikTok o Facebook.</p></div><div class=\"step\"><div class=\"n\">03</div><h3>Vendes directo</h3><p>El interesado te contacta directo. Sin intermediarios y sin comisiones por venta.</p></div></div></div></section><section class=\"block\" id=\"ejemplos\" style=\"background:var(--bg)\"><div class=\"wrap\"><div class=\"eyebrow\">Ejemplos</div><div class=\"h2\">Mira lo que se puede armar</div><p class=\"lead\">Catálogos hechos con Vendeloo. Desliza y toca uno para verlo como lo verían tus clientes.</p><div class=\"carousel\"><button class=\"arrow l\" id=\"arl\">‹</button><div class=\"track\" id=\"track\"><div class=\"cat\" data-i=\"0\"><div class=\"cv\" style=\"background-image:linear-gradient(180deg,rgba(7,26,82,.05),rgba(7,26,82,.6)),url(https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=420&h=300&q=72)\"><div class=\"ov\"><b>El Clóset de Caro</b><span>Ropa y accesorios</span></div></div><div class=\"cf\">Ver catálogo →</div></div><div class=\"cat\" data-i=\"1\"><div class=\"cv\" style=\"background-image:linear-gradient(180deg,rgba(7,26,82,.05),rgba(7,26,82,.6)),url(https://images.unsplash.com/photo-1579783928621-7a13d66a62d1?auto=format&fit=crop&w=420&h=300&q=72)\"><div class=\"ov\"><b>Estudio Lumen</b><span>Arte y decoración</span></div></div><div class=\"cf\">Ver catálogo →</div></div><div class=\"cat\" data-i=\"2\"><div class=\"cv\" style=\"background-image:linear-gradient(180deg,rgba(7,26,82,.05),rgba(7,26,82,.6)),url(https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=420&h=300&q=72)\"><div class=\"ov\"><b>TecnoCambio</b><span>Tecnología de segunda</span></div></div><div class=\"cf\">Ver catálogo →</div></div><div class=\"cat\" data-i=\"3\"><div class=\"cv\" style=\"background-image:linear-gradient(180deg,rgba(7,26,82,.05),rgba(7,26,82,.6)),url(https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=420&h=300&q=72)\"><div class=\"ov\"><b>Rincón Vintage</b><span>Muebles y hogar</span></div></div><div class=\"cf\">Ver catálogo →</div></div><div class=\"cat\" data-i=\"4\"><div class=\"cv\" style=\"background-image:linear-gradient(180deg,rgba(7,26,82,.05),rgba(7,26,82,.6)),url(https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?auto=format&fit=crop&w=420&h=300&q=72)\"><div class=\"ov\"><b>La Mudanza de Ana</b><span>Todo de casa</span></div></div><div class=\"cf\">Ver catálogo →</div></div></div><button class=\"arrow r\" id=\"arr\">›</button></div></div></section><section class=\"block pricing\" id=\"precios\"><div class=\"wrap\"><div class=\"eyebrow\">Precios</div><div class=\"h2\">Elige tu plan</div><p class=\"lead\">El link de tu catálogo dura <b>4 semanas</b>. Eliges según cuántos artículos quieras publicar. Sin permanencia: si necesitas más tiempo o más artículos, amplías cuando quieras.</p><div style=\"display:flex;align-items:center;gap:10px;margin-bottom:22px;font-size:14px;color:var(--soft);flex-wrap:wrap\">Moneda: <select id=\"cursel\" style=\"width:auto;padding:8px 11px;border:1.5px solid var(--line);border-radius:10px;font-family:Poppins;font-size:14px\"><option value=\"COP\">Peso colombiano (COP)</option><option value=\"USD\">Dólar (USD)</option><option value=\"EUR\">Euro (EUR)</option></select> <span style=\"font-size:12px;color:#9aa6c2\">· €/US$ aproximados — precios de España por definir</span></div><div class=\"grid3\"><div class=\"plan\"><h3>Básico</h3><div class=\"price\">$130.000</div><div class=\"per\">por 4 semanas</div><ul><li>De 1 a 10 artículos</li><li>Tu catálogo en vendeloo.shop/tunombre</li><li>Botón de WhatsApp en cada artículo</li><li>Estados: disponible / reservado / vendido</li></ul><button class=\"btn btn--ghost planbtn\" data-plan=\"Básico\">Elegir Básico</button></div><div class=\"plan feat\"><span class=\"tag\">Recomendado</span><h3>Medio</h3><div class=\"price\">$180.000</div><div class=\"per\">por 4 semanas</div><ul><li>De 11 a 25 artículos</li><li>Todo lo del Básico</li><li>Todas las plantillas y colores</li><li>Estadísticas: visitas y clics a WhatsApp</li><li>Cuentas: quién te pagó y quién no</li></ul><button class=\"btn btn--grad planbtn\" data-plan=\"Medio\">Elegir Medio</button></div><div class=\"plan\"><h3>Grande</h3><div class=\"price\">$230.000</div><div class=\"per\">por 4 semanas</div><ul><li>De 26 a 50 artículos</li><li>Todo lo del Medio</li><li>Estadísticas completas</li><li>Cuentas con ventas múltiples</li></ul><button class=\"btn btn--ghost planbtn\" data-plan=\"Grande\">Elegir Grande</button></div></div><div id=\"ampcalm\" style=\"margin-top:18px;text-align:center;font-size:14px;color:var(--soft)\">¿Se te acaba el tiempo y aún tienes cosas por vender? Desde tu panel puedes <b style=\"color:var(--ink)\">ampliar las semanas que necesites</b>, sin volver a subir nada.</div><div id=\"soon\" style=\"margin-top:20px;border:1.5px dashed var(--line);background:#fff;border-radius:18px;padding:20px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap\"><span style=\"font-family:Montserrat;font-weight:700;font-size:11px;color:#6D3DFF;background:#F0EBFF;padding:5px 12px;border-radius:99px\">Próximamente</span><div style=\"flex:1;min-width:240px\"><div style=\"font-family:Montserrat;font-weight:800;font-size:17px;letter-spacing:-.02em\">Plan Emprendedor</div><div style=\"color:var(--soft);font-size:14px;margin-top:2px\">¿Tienes un emprendimiento y vendes seguido? Catálogo permanente, link fijo y cuentas, con pago mensual. Lo estamos preparando.</div></div><button disabled style=\"border:1.5px solid var(--line);background:var(--bg);color:var(--soft);border-radius:11px;padding:11px 18px;font-family:Montserrat;font-weight:700;font-size:14px;cursor:not-allowed\">Próximamente</button></div></div></section><section class=\"ctaband\"><div class=\"wrap\"><div class=\"box\"><h2>¿Listo para vender lo que ya no usas?</h2><a class=\"btn tocrear\" style=\"background:#fff;color:#1565FF\" href=\"#precios\">Elegir mi plan</a></div></div></section><footer><div class=\"wrap\"><img src=\"/Vendeloo.png\" alt=\"Vendeloo\"><div class=\"fcol\"><div class=\"frow\"><a href=\"#como\">Cómo funciona</a><a href=\"#precios\">Precios</a><a href=\"#ejemplos\">Ejemplos</a><a href=\"#contacto\">Contacto</a></div><div class=\"fcop\">© 2026 Vendeloo</div></div></div></footer><div class=\"modal\" id=\"catalog\"><div class=\"catcard\"><button class=\"x\" data-close=\"catalog\">×</button><div id=\"catbody\"></div></div></div><div class=\"modal\" id=\"planmodal\"><div class=\"card\"><button class=\"x\" data-close=\"planmodal\" style=\"color:var(--soft);background:#f0f0f0\">×</button><h3>Crea tu catálogo</h3><p>Cuéntanos de tu negocio y te ayudamos a montarlo.</p><div class=\"selbar\">Plan seleccionado: <b id=\"selplan\">—</b></div><div class=\"fld\"><label>Nombre de tu catálogo</label><input placeholder=\"Ej: El Clóset de Caro\"></div><div class=\"fld\"><label>Tu teléfono (WhatsApp)</label><input placeholder=\"+57 300 000 0000\"></div><div class=\"fld\"><label>Tu correo (será tu usuario)</label><input placeholder=\"tucorreo@ejemplo.com\"></div><div class=\"fld\"><label>Tipo de documento</label><select><option>Cédula</option><option>Pasaporte</option><option>NIE</option><option>NIF / DNI</option></select></div><div class=\"fld\"><label>Número de documento</label><input placeholder=\"Tu número de documento\"></div><div class=\"fld\"><label>Crea tu contraseña</label><input type=\"password\" placeholder=\"contraseña\"></div><button class=\"btn btn--grad\" id=\"planenviar\" style=\"width:100%\">Enviar solicitud</button></div></div><div class=\"modal\" id=\"contactmodal\"><div class=\"card\"><button class=\"x\" data-close=\"contactmodal\" style=\"color:var(--soft);background:#f0f0f0\">×</button><h3>Contáctanos</h3><p>Déjanos tus datos y te escribimos.</p><div class=\"fld\"><label>Tu nombre</label><input placeholder=\"Nombre\"></div><div class=\"fld\"><label>Tu teléfono (WhatsApp)</label><input placeholder=\"+57 300 000 0000\"></div><div class=\"fld\"><label>Tu correo</label><input placeholder=\"tucorreo@ejemplo.com\"></div><div class=\"fld\"><label>Mensaje</label><input placeholder=\"¿En qué te ayudamos?\"></div><button class=\"btn btn--grad\" id=\"csend\" style=\"width:100%\">Enviar</button></div></div><div class=\"modal\" id=\"loginmodal\"><div class=\"card\"><button class=\"x\" data-close=\"loginmodal\" style=\"color:var(--soft);background:#f0f0f0\">×</button><h3>Entrar</h3><p>Accede a tu panel de Vendeloo.</p><div class=\"fld\"><label>Correo</label><input placeholder=\"tucorreo@ejemplo.com\"></div><div class=\"fld\"><label>Contraseña</label><input type=\"password\" placeholder=\"contraseña\"></div><button class=\"btn btn--grad\" id=\"loginbtn\" style=\"width:100%\">Entrar</button></div></div>";
+  return <div dangerouslySetInnerHTML={{ __html: '<style>' + CSS + '</style>' + BODY }} />;
 }
