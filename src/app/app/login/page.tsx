@@ -28,8 +28,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="wrap" style={{ maxWidth: 420, padding: '64px 20px' }}>
-      <Link href="/" style={{ color: 'var(--ink-soft)', fontSize: 14, fontWeight: 600 }}>← Vendeloo</Link>
+    <>
+    <header style={{ background: '#fff', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 22px', display: 'flex', alignItems: 'center', height: 96 }}>
+        <Link href="/"><img src="/Vendeloo_horizontal.png" alt="Vendeloo" style={{ height: 80, display: 'block' }} /></Link>
+      </div>
+    </header>
+    <main className="wrap" style={{ maxWidth: 420, padding: '48px 20px' }}>
       <h1 style={{ fontSize: 28, margin: '20px 0 6px' }}>Entra a tu catálogo</h1>
       <p style={{ color: 'var(--ink-soft)', marginBottom: 24 }}>Gestiona tus artículos y tu marca.</p>
 
@@ -46,6 +51,7 @@ export default function LoginPage() {
         ¿Aún no tienes catálogo? <Link href="/alta" style={{ color: 'var(--coral-deep)', fontWeight: 600 }}>Pídelo aquí</Link>.
       </p>
     </main>
+    </>
   );
 }
 
