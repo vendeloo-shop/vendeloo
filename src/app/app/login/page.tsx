@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
@@ -25,6 +26,15 @@ export default function LoginPage() {
     }
     router.push('/app');
     router.refresh();
+  }
+
+  async function forgot() {
+    setError(null);
+    if (!email) { setError('Escribe tu correo arriba y vuelve a tocar aquí.'); return; }
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/app/reset' });
+    if (error) { setError('No pudimos enviar el correo. Intenta de nuevo.'); return; }
+    setSent(true);
   }
 
   return (
@@ -46,6 +56,14 @@ export default function LoginPage() {
           {loading ? 'Entrando…' : 'Entrar'}
         </button>
       </form>
+
+      {sent ? (
+        <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 14 }}>Te enviamos un correo para restablecer tu contraseña. Revisa tu bandeja (y spam).</p>
+      ) : (
+        <p style={{ marginTop: 14 }}>
+          <button type="button" onClick={forgot} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--ink-soft)', fontSize: 13, cursor: 'pointer', textDecoration: 'underline' }}>¿Olvidaste tu contraseña?</button>
+        </p>
+      )}
 
       <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 20 }}>
         ¿Aún no tienes catálogo? <Link href="/alta" style={{ color: 'var(--coral-deep)', fontWeight: 600 }}>Pídelo aquí</Link>.
