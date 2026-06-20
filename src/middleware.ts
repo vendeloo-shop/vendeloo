@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
-  const protectedArea = path.startsWith('/app') && path !== '/app/login';
+  const protectedArea = path.startsWith('/app') && path !== '/app/login' && path !== '/app/reset';
   const ownerArea = path.startsWith('/panel');
 
   if ((protectedArea || ownerArea) && !user) {
