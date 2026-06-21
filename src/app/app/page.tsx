@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { Seller, Item } from '@/lib/supabase/types';
 import { formatPrice, estadoLabel } from '@/lib/format';
 import SignOut from '@/components/SignOut';
+import { registrarVenta } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +24,12 @@ export default async function SellerHome() {
     ? await supabase.from('items').select('*').eq('seller_id', seller.id).order('created_at', { ascending: false })
     : { data: [] as Item[] };
   const items = (itemsData as Item[]) ?? [];
+
+  const ventasRes = seller
+    ? await supabase.from('ventas').select('*').eq('seller_id', seller.id).order('created_at', { ascending: false }).limit(10)
+    : null;
+  const ventas = (ventasRes?.data ?? []) as Array<{ id: string; item_name: string | null; amount: number; buyer: string | null }>;
+  const totalVendido = ventas.reduce((acc, v) => acc + (v.amount || 0), 0);
 
   const dias = seller?.expires_at
     ? Math.ceil((new Date(seller.expires_at).getTime() - Date.now()) / 86400000)
@@ -80,6 +87,41 @@ export default async function SellerHome() {
           <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 24 }}>
             La edición completa de artículos (fotos, precios, estados) llega en el siguiente avance.
           </p>
+
+          <h2 style={{ fontSize: 20, marginTop: 32, marginBottom: 12 }}>Registrar una venta</h2>
+          <form action={registrarVenta} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 20 }}>
+            <input name="item" list="lista-items" placeholder="Artículo" style={inpV} />
+            <datalist id="lista-items">
+              {items.map((it) => (
+                <option key={it.id} value={it.name} />
+              ))}
+            </datalist>
+            <input name="amount" type="number" placeholder="Monto" required style={{ ...inpV, maxWidth: 120 }} />
+            <input name="qty" type="number" defaultValue={1} placeholder="Cant." style={{ ...inpV, maxWidth: 80 }} />
+            <input name="paid" type="number" placeholder="Pagado" style={{ ...inpV, maxWidth: 120 }} />
+            <input name="buyer" placeholder="Comprador (opcional)" style={inpV} />
+            <button type="submit" className="btn btn--primary" style={{ padding: '10px 18px' }}>Registrar venta</button>
+          </form>
+
+          {ventas.length > 0 && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <h2 style={{ fontSize: 20 }}>Ventas recientes</h2>
+                <span style={{ fontFamily: 'var(--display)', fontWeight: 700 }}>{formatPrice(totalVendido)}</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {ventas.map((v) => (
+                  <div key={v.id} style={rowStyle}>
+                    <span style={{ fontWeight: 600 }}>
+                      {v.item_name || 'Venta'}
+                      {v.buyer ? ' · ' + v.buyer : ''}
+                    </span>
+                    <span style={{ fontFamily: 'var(--display)', fontWeight: 700 }}>{formatPrice(v.amount)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </main>
@@ -95,6 +137,17 @@ const rowStyle: React.CSSProperties = {
   borderRadius: 'var(--r-btn)',
   padding: '12px 16px',
   boxShadow: 'var(--shadow)',
+};
+
+const inpV: React.CSSProperties = {
+  border: '1.5px solid var(--line)',
+  borderRadius: 'var(--r-btn)',
+  padding: '10px 12px',
+  fontSize: 14,
+  fontFamily: 'var(--body)',
+  background: '#fff',
+  flex: '1 1 140px',
+  minWidth: 0,
 };
 
 function Stat({ label, value }: { label: string; value: string }) {
