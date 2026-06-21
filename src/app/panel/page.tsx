@@ -22,7 +22,7 @@ export default async function PanelPage() {
     .order('created_at', { ascending: false });
   const sellers = (data as Seller[]) ?? [];
   const activos = sellers.filter((s) => s.status === 'active').length;
-  const tipoDe = (s: { tipo?: string }) => s.tipo || 'cliente';
+  const tipoDe = (s: Seller) => ((s as unknown as { tipo?: string }).tipo) || 'cliente';
   const propias = sellers.filter((s) => tipoDe(s) === 'propia').length;
   const cortesias = sellers.filter((s) => tipoDe(s) === 'cortesia').length;
   const PRICES: Record<string, number> = { basico: 130000, medio: 180000, grande: 230000 };
