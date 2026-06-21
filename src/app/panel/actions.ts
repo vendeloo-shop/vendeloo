@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache';
 
 const DAY = 86400000;
 const PLAN_LIMITS: Record<string, number> = { basico: 10, medio: 25, grande: 50 };
-const SETTING_KEYS = ['price_basico', 'price_medio', 'price_grande', 'pse_link', 'pago_datos', 'vnd_prefijo', 'remitente', 'landing_sub', 'contacto_msg'];
+const SETTING_KEYS = ['price_basico', 'price_medio', 'price_grande', 'pse_link', 'vnd_prefijo', 'remitente', 'landing_sub', 'contacto_msg', 'pago_co', 'pago_es', 'pago_mx', 'pago_ar', 'pago_us', 'pago_otro'];
 
 async function ownerClient() {
   const supabase = await createClient();
