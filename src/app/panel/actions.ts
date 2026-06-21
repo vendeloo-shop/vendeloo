@@ -94,6 +94,7 @@ export async function crearCliente(formData: FormData) {
     name: nombre || slug,
     email,
     status: 'active',
+    template: 'vibrante',
     plan,
     item_limit: limit,
     started_at: new Date().toISOString(),
@@ -116,4 +117,31 @@ export async function guardarAjustes(formData: FormData) {
   revalidatePath('/panel/ajustes');
   revalidatePath('/');
   revalidatePath('/alta');
+}
+
+export async function crearTiendaGratis(formData: FormData) {
+  const supabase = await ownerClient();
+  const nombre = String(formData.get('nombre') || '').trim();
+  const slug = String(formData.get('slug') || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const plan = String(formData.get('plan') || 'medio');
+  const limit = PLAN_LIMITS[plan] ?? 25;
+  if (!slug) {
+    throw new Error('Falta el slug de la tienda');
+  }
+  const now = new Date();
+  const { error } = await supabase.from('sellers').insert({
+    slug,
+    name: nombre || slug,
+    status: 'active',
+    template: 'vibrante',
+    plan,
+    item_limit: limit,
+    started_at: now.toISOString(),
+    expires_at: new Date(now.getTime() + 365 * DAY).toISOString(),
+    notes: 'Cortesia',
+  });
+  if (error) {
+    throw new Error('No se pudo crear la tienda: ' + error.message);
+  }
+  revalidatePath('/panel');
 }
