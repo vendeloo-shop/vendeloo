@@ -22,9 +22,12 @@ export default async function PanelPage() {
     .order('created_at', { ascending: false });
   const sellers = (data as Seller[]) ?? [];
   const activos = sellers.filter((s) => s.status === 'active').length;
+  const tipoDe = (s: { tipo?: string }) => s.tipo || 'cliente';
+  const propias = sellers.filter((s) => tipoDe(s) === 'propia').length;
+  const cortesias = sellers.filter((s) => tipoDe(s) === 'cortesia').length;
   const PRICES: Record<string, number> = { basico: 130000, medio: 180000, grande: 230000 };
   const ingresos = sellers
-    .filter((s) => s.status === 'active')
+    .filter((s) => s.status === 'active' && tipoDe(s) === 'cliente')
     .reduce((sum, s) => sum + (s.plan ? PRICES[s.plan] || 0 : 0), 0);
 
   if (!isOwner) {
@@ -50,6 +53,8 @@ export default async function PanelPage() {
         <div style={statCard}><div style={statNum}>{sellers.length}</div><div style={statLbl}>Clientes</div></div>
         <div style={statCard}><div style={statNum}>{activos}</div><div style={statLbl}>Activos</div></div>
         <div style={statCard}><div style={statNum}>${ingresos.toLocaleString('es-CO')}</div><div style={statLbl}>Ingresos estimados (4 sem)</div></div>
+        <div style={statCard}><div style={statNum}>{propias}</div><div style={statLbl}>Tuyas</div></div>
+        <div style={statCard}><div style={statNum}>{cortesias}</div><div style={statLbl}>Cortesía</div></div>
       </div>
 
       <details style={{ marginBottom: 20 }}>
