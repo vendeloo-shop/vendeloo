@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 
 const DAY = 86400000;
 const PLAN_LIMITS: Record<string, number> = { basico: 10, medio: 25, grande: 50 };
+const SETTING_KEYS = ['price_basico', 'price_medio', 'price_grande', 'pse_link', 'pago_datos', 'vnd_prefijo', 'remitente', 'landing_sub', 'contacto_msg'];
 
 async function ownerClient() {
   const supabase = await createClient();
@@ -102,4 +103,17 @@ export async function crearCliente(formData: FormData) {
     throw new Error('Usuario creado, pero fallo la tienda: ' + e2.message);
   }
   revalidatePath('/panel');
+}
+
+export async function guardarAjustes(formData: FormData) {
+  const supabase = await ownerClient();
+  const rows = SETTING_KEYS.map((k) => ({
+    key: k,
+    value: String(formData.get(k) ?? ''),
+    updated_at: new Date().toISOString(),
+  }));
+  await supabase.from('settings').upsert(rows, { onConflict: 'key' });
+  revalidatePath('/panel/ajustes');
+  revalidatePath('/');
+  revalidatePath('/alta');
 }
