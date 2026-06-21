@@ -98,7 +98,10 @@ export default async function SellerHome() {
             </datalist>
             <input name="amount" type="number" placeholder="Monto" required style={{ ...inpV, maxWidth: 120 }} />
             <input name="qty" type="number" defaultValue={1} placeholder="Cant." style={{ ...inpV, maxWidth: 80 }} />
-            <input name="paid" type="number" placeholder="Pagado" style={{ ...inpV, maxWidth: 120 }} />
+            <select name="pagado" defaultValue="si" style={{ ...inpV, maxWidth: 140 }}>
+              <option value="si">Pagado: Sí</option>
+              <option value="no">Pagado: No</option>
+            </select>
             <input name="buyer" placeholder="Comprador (opcional)" style={inpV} />
             <button type="submit" className="btn btn--primary" style={{ padding: '10px 18px' }}>Registrar venta</button>
           </form>
