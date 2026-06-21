@@ -34,10 +34,15 @@ export default async function AjustesPage() {
           <Field label="Grande" name="price_grande" value={s.price_grande} />
         </Group>
 
-        <Group title="Datos de pago">
-          <Field label="Link PSE (sin valor, reutilizable)" name="pse_link" value={s.pse_link} placeholder="https://..." />
-          <Area label="Datos de pago que ve el cliente" name="pago_datos" value={s.pago_datos} />
+        <Group title="Datos de pago por país">
+          <Field label="Link de pago online (PSE / tarjeta), reutilizable" name="pse_link" value={s.pse_link} placeholder="https://..." />
           <Field label="Prefijo de referencia" name="vnd_prefijo" value={s.vnd_prefijo} />
+          <Area label="Colombia (un método por línea, formato Nombre: valor)" name="pago_co" value={s.pago_co} />
+          <Area label="España" name="pago_es" value={s.pago_es} />
+          <Area label="México" name="pago_mx" value={s.pago_mx} />
+          <Area label="Argentina" name="pago_ar" value={s.pago_ar} />
+          <Area label="Estados Unidos" name="pago_us" value={s.pago_us} />
+          <Area label="Otro país" name="pago_otro" value={s.pago_otro} />
         </Group>
 
         <Group title="Textos del landing">
