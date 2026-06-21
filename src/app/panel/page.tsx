@@ -103,6 +103,9 @@ export default async function PanelPage() {
                     </span>
                   )}
                   <span className={`badge ${badgeClass(s.status)}`}>{s.status}</span>
+                  <Link href={`/panel/tienda/${s.slug}`} className="btn btn--ghost" style={{ padding: '7px 12px', fontSize: 13 }}>
+                    Analítica
+                  </Link>
                   <Link href={`/${s.slug}`} className="btn btn--ghost" style={{ padding: '7px 12px', fontSize: 13 }}>
                     Ver
                   </Link>
