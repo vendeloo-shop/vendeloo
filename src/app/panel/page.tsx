@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import type { Seller } from '@/lib/supabase/types';
 import SignOut from '@/components/SignOut';
-import { activar, renovar, pausar, cambiarPlan } from './actions';
+import { activar, renovar, pausar, cambiarPlan, crearCliente } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +48,22 @@ export default async function PanelPage() {
         <div style={statCard}><div style={statNum}>{activos}</div><div style={statLbl}>Activos</div></div>
         <div style={statCard}><div style={statNum}>${ingresos.toLocaleString('es-CO')}</div><div style={statLbl}>Ingresos estimados (4 sem)</div></div>
       </div>
+
+      <details style={{ marginBottom: 20 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>+ Crear cliente nuevo</summary>
+        <form action={crearCliente} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12, alignItems: 'center' }}>
+          <input name="nombre" placeholder="Nombre de la tienda" style={inpStyle} />
+          <input name="slug" placeholder="slug (ej: mi-tienda)" required style={inpStyle} />
+          <input name="email" type="email" placeholder="Correo" required style={inpStyle} />
+          <input name="password" type="password" placeholder="Contraseña temporal" required style={inpStyle} />
+          <select name="plan" defaultValue="medio" style={selStyle}>
+            <option value="basico">Básico (10)</option>
+            <option value="medio">Medio (25)</option>
+            <option value="grande">Grande (50)</option>
+          </select>
+          <button type="submit" style={{ ...actBtn, background: 'var(--blue)', color: '#fff', border: 'none' }}>Crear cliente</button>
+        </form>
+      </details>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {sellers.map((s) => {
@@ -142,6 +158,17 @@ const statCard: React.CSSProperties = {
 
 const statNum: React.CSSProperties = { fontSize: 22, fontWeight: 800, fontFamily: 'var(--display)' };
 const statLbl: React.CSSProperties = { fontSize: 12, color: 'var(--ink-soft)', marginTop: 2 };
+
+const inpStyle: React.CSSProperties = {
+  border: '1.5px solid var(--line)',
+  borderRadius: 'var(--r-btn)',
+  padding: '8px 10px',
+  fontSize: 13,
+  fontFamily: 'var(--body)',
+  background: '#fff',
+  color: 'var(--ink)',
+  minWidth: 140,
+};
 
 const selStyle: React.CSSProperties = {
   border: '1.5px solid var(--line)',
