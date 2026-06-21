@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import type { Seller } from '@/lib/supabase/types';
 import SignOut from '@/components/SignOut';
-import { activar, renovar, pausar, cambiarPlan, crearCliente } from './actions';
+import { activar, renovar, pausar, cambiarPlan, crearCliente, crearTiendaGratis } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,6 +65,20 @@ export default async function PanelPage() {
             <option value="grande">Grande (50)</option>
           </select>
           <button type="submit" style={{ ...actBtn, background: 'var(--blue)', color: '#fff', border: 'none' }}>Crear cliente</button>
+        </form>
+      </details>
+
+      <details style={{ marginBottom: 20 }}>
+        <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 15 }}>+ Crear tienda de cortesía (gratis)</summary>
+        <form action={crearTiendaGratis} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12, alignItems: 'center' }}>
+          <input name="nombre" placeholder="Nombre de la tienda" style={inpStyle} />
+          <input name="slug" placeholder="slug (ej: mi-tienda)" required style={inpStyle} />
+          <select name="plan" defaultValue="medio" style={selStyle}>
+            <option value="basico">Básico (10)</option>
+            <option value="medio">Medio (25)</option>
+            <option value="grande">Grande (50)</option>
+          </select>
+          <button type="submit" style={{ ...actBtn, background: 'var(--purple)', color: '#fff', border: 'none' }}>Crear gratis</button>
         </form>
       </details>
 
