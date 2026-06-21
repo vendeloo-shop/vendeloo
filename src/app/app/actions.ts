@@ -18,8 +18,8 @@ export async function registrarVenta(formData: FormData) {
 
   const amount = Math.round(Number(formData.get('amount') || 0));
   const qty = Math.max(1, Math.round(Number(formData.get('qty') || 1)));
-  let paid = Math.round(Number(formData.get('paid') || 0));
-  if (paid <= 0) paid = amount;
+  const pagado = String(formData.get('pagado') || 'si');
+  const paid = pagado === 'no' ? 0 : amount;
   const itemName = String(formData.get('item') || '').trim();
   const buyer = String(formData.get('buyer') || '').trim();
   if (amount <= 0) return;
