@@ -21,6 +21,11 @@ export default async function PanelPage() {
     .select('*')
     .order('created_at', { ascending: false });
   const sellers = (data as Seller[]) ?? [];
+  const activos = sellers.filter((s) => s.status === 'active').length;
+  const PRICES: Record<string, number> = { basico: 130000, medio: 180000, grande: 230000 };
+  const ingresos = sellers
+    .filter((s) => s.status === 'active')
+    .reduce((sum, s) => sum + (s.plan ? PRICES[s.plan] || 0 : 0), 0);
 
   if (!isOwner) {
     return (
@@ -38,7 +43,11 @@ export default async function PanelPage() {
         <h1 style={{ fontSize: 28 }}>Cabina Vendeloo</h1>
         <SignOut />
       </div>
-      <p style={{ color: 'var(--ink-soft)', margin: '6px 0 24px' }}>{sellers.length} clientes</p>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', margin: '14px 0 24px' }}>
+        <div style={statCard}><div style={statNum}>{sellers.length}</div><div style={statLbl}>Clientes</div></div>
+        <div style={statCard}><div style={statNum}>{activos}</div><div style={statLbl}>Activos</div></div>
+        <div style={statCard}><div style={statNum}>${ingresos.toLocaleString('es-CO')}</div><div style={statLbl}>Ingresos estimados (4 sem)</div></div>
+      </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {sellers.map((s) => {
@@ -122,6 +131,17 @@ const actBtn: React.CSSProperties = {
   color: 'var(--ink)',
   cursor: 'pointer',
 };
+
+const statCard: React.CSSProperties = {
+  background: 'var(--card)',
+  borderRadius: 'var(--r-btn)',
+  padding: '14px 18px',
+  boxShadow: 'var(--shadow)',
+  minWidth: 120,
+};
+
+const statNum: React.CSSProperties = { fontSize: 22, fontWeight: 800, fontFamily: 'var(--display)' };
+const statLbl: React.CSSProperties = { fontSize: 12, color: 'var(--ink-soft)', marginTop: 2 };
 
 const selStyle: React.CSSProperties = {
   border: '1.5px solid var(--line)',
