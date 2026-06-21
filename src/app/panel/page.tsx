@@ -41,7 +41,10 @@ export default async function PanelPage() {
     <main className="wrap" style={{ padding: '32px 20px 80px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: 28 }}>Cabina Vendeloo</h1>
-        <SignOut />
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Link href="/panel/ajustes" className="btn btn--ghost" style={{ padding: '7px 12px', fontSize: 13 }}>Ajustes</Link>
+          <SignOut />
+        </div>
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', margin: '14px 0 24px' }}>
         <div style={statCard}><div style={statNum}>{sellers.length}</div><div style={statLbl}>Clientes</div></div>
