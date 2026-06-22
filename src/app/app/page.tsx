@@ -1,238 +1,161 @@
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import type { Seller, Item } from '@/lib/supabase/types';
-import { formatPrice, estadoLabel } from '@/lib/format';
-import SignOut from '@/components/SignOut';
-import { registrarVenta, crearItem, editarItem, toggleItem, guardarTienda } from './actions';
+'use client';
+import { useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
-export const dynamic = 'force-dynamic';
+const SCRIPT1 = `window.__CSS=':root{--blue:#1565FF;--purple:#6D3DFF;--navy:#071A52;--ink:#0E1B3A;--soft:#5A6A8C;--line:#E8ECF7;--bg:#F4F7FF}*{box-sizing:border-box;margin:0}body{font-family:Poppins,system-ui,sans-serif;color:var(--ink);background:var(--bg)}h1,h2,h3{font-family:Montserrat,sans-serif;letter-spacing:-.02em}'+
+'.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.top .in{max-width:1000px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}.brand{display:flex;align-items:center;gap:10px}.bdot{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-family:Montserrat;font-weight:800}.bname{font-family:Montserrat;font-weight:800;font-size:15px}.bname small{display:block;color:var(--soft);font-weight:500;font-size:11px}#vlbrand{height:46px;margin-left:auto}.lang{display:flex;gap:4px;align-items:center}.lang button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 8px;font-size:13px;cursor:pointer}.lang button.on{border-color:var(--blue);background:#EEF4FF}.logout{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-family:Montserrat;font-weight:700;font-size:13px;cursor:pointer;color:var(--soft)}'+
+'.tabs{max-width:1000px;margin:0 auto;padding:0 20px;display:flex;gap:4px;flex-wrap:wrap}.tab{padding:14px 14px;font-family:Montserrat;font-weight:700;font-size:14px;color:var(--soft);border:0;background:none;cursor:pointer;border-bottom:3px solid transparent}.tab.on{color:var(--blue);border-bottom-color:var(--blue)}.wrap{max-width:1000px;margin:0 auto;padding:22px 20px 20px}.panel{display:none}.panel.on{display:block}.tools{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}.tools h2{font-size:22px;margin-right:auto}.add{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:0;border-radius:11px;padding:11px 18px;font-family:Montserrat;font-weight:700;font-size:14px;cursor:pointer}'+
+'.limit{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap;font-size:14px}.limit b{font-family:Montserrat}.bar{flex:1;min-width:160px;height:8px;background:var(--line);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:48%;background:linear-gradient(90deg,var(--blue),var(--purple))}.ampl{border:1.5px solid var(--blue);color:var(--blue);background:#fff;border-radius:10px;padding:8px 14px;font-family:Montserrat;font-weight:700;font-size:13px;cursor:pointer}'+
+'.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.item{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative}.item.off{border-color:#F2B0A8;box-shadow:0 0 0 2px #F7C9C3 inset}.item.off .ph,.item.off .ib{opacity:.55}.apg{position:absolute;z-index:4;top:46px;left:10px;background:#C0392B;color:#fff;font-family:Montserrat;font-weight:800;font-size:10px;padding:3px 9px;border-radius:99px;letter-spacing:.04em;display:none}.item.off .apg{display:block}.ph{height:140px;background-size:cover;background-position:center;position:relative}.bdg{position:absolute;top:10px;left:10px;font-family:Montserrat;font-weight:700;font-size:11px;padding:4px 10px;border-radius:99px}.nfoto{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:2px 7px;border-radius:9px}.ib{padding:12px 13px}.inm{font-family:Montserrat;font-weight:700;font-size:14px}.isub{color:var(--soft);font-size:12px;margin-top:1px}.ipr{font-family:Montserrat;font-weight:800;font-size:16px;margin:4px 0 4px}.ipr .old{color:var(--soft);font-weight:500;font-size:13px;text-decoration:line-through;margin-right:6px}.dscb{display:inline-block;background:#FDEEEC;color:#C0392B;font-size:10px;font-weight:700;font-family:Montserrat;padding:2px 7px;border-radius:7px;margin-bottom:8px}.iact{display:flex;gap:6px;align-items:center}.mini{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 8px;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink);flex:1}.actsw{position:relative;width:42px;height:24px;flex:0 0 auto}.actsw input{opacity:0;width:0;height:0}.actsw span{position:absolute;inset:0;background:#E0574F;border-radius:99px;transition:.2s;cursor:pointer}.actsw span:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}.actsw input:checked+span{background:#11936A}.actsw input:checked+span:before{transform:translateX(18px)}'+
+'.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;max-width:640px}.sec{font-family:Montserrat;font-weight:800;font-size:13px;color:var(--blue);text-transform:uppercase;letter-spacing:.04em;margin-bottom:16px}.fld{margin-bottom:14px}.fld label{font-size:13px;font-weight:600;display:block;margin-bottom:6px}.fld input,.fld select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-family:Poppins;font-size:15px}.fld input:disabled,.fld select:disabled{background:#F4F7FF;color:var(--soft)}.row2{display:flex;gap:12px;flex-wrap:wrap}.row2>div{flex:1;min-width:140px}.colsel{display:flex;gap:8px}.colbtn{border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:8px 16px;font-family:Montserrat;font-weight:700;cursor:pointer}.colbtn.on{border-color:var(--blue);color:var(--blue);background:#EEF4FF}.linkbox{display:flex;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-size:14px;color:var(--soft)}.save{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:0;border-radius:11px;padding:12px 20px;font-family:Montserrat;font-weight:700;cursor:pointer;margin-top:6px}.ghost{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px 18px;font-family:Montserrat;font-weight:700;cursor:pointer}.lock{margin-left:auto;border:0;background:none;color:var(--blue);font-size:12px;font-weight:700;cursor:pointer}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);border-radius:99px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;user-select:none}.chip input{margin:0}.chip:has(input:checked){border-color:var(--blue);background:#EEF4FF;color:var(--blue)}'+
+'.plancard{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:16px;padding:20px 22px;margin-bottom:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;max-width:640px}.plancard .pl{font-family:Montserrat;font-weight:800;font-size:20px}.plancard .pm{font-size:13px;opacity:.9}.plancard .ampl{margin-left:auto;background:#fff;border-color:#fff}'+
+'.dlbtn{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:11px 16px;font-family:Montserrat;font-weight:700;cursor:pointer;font-size:13px}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:560px}th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--soft);padding:12px 14px;border-bottom:1px solid var(--line)}td{padding:11px 14px;border-bottom:1px solid var(--line);font-size:14px}tr:last-child td{border-bottom:0}.srow{cursor:pointer}.srow:hover{background:#F7FAFF}.badge2{font-family:Montserrat;font-weight:700;font-size:11px;padding:4px 10px;border-radius:99px}.sumrow{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}.sum{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 20px;flex:1;min-width:150px}.sum .l{color:var(--soft);font-size:13px}.sum .v{font-family:Montserrat;font-weight:800;font-size:22px}.sum.cob .v{color:#0c7a57}.sum.pen .v{color:#9A7400}.pick{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;font-size:14px}.pick b{margin-left:auto;font-family:Montserrat}.pick:has(input:checked){border-color:var(--blue);background:#EEF4FF}.totline{display:flex;justify-content:space-between;font-family:Montserrat;font-weight:800;font-size:17px;margin:10px 0 14px}'+
+'.devbar{display:flex;gap:8px;justify-content:center;margin-bottom:18px}.devbtn{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 16px;font-family:Montserrat;font-weight:700;font-size:13px;cursor:pointer;color:var(--soft)}.devbtn.on{border-color:var(--blue);color:var(--blue);background:#EEF4FF}.device{margin:0 auto;transition:width .2s}.device.web{width:780px;max-width:100%}.device.tablet{width:560px;max-width:100%}.device.phone{width:380px;max-width:100%}.pub{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 20px 50px rgba(7,26,82,.10);position:relative}.pubcover{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;padding:24px 20px;text-align:center;position:relative}.pubcover h3{font-size:22px;font-weight:800}.pubcover p{font-size:13px;opacity:.92;margin:4px 0 12px}.pubcover .tip{background:rgba(255,255,255,.18);border-radius:9px;padding:7px 12px;font-size:12px;display:inline-block}.cartbtn{position:absolute;top:16px;right:16px;background:#fff;color:var(--navy);border:0;border-radius:99px;padding:8px 13px;font-family:Montserrat;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15)}.cartbtn .cb{background:var(--blue);color:#fff;border-radius:99px;padding:1px 7px;margin-left:5px;font-size:12px}.paybox{display:flex;gap:12px;padding:16px;flex-wrap:wrap}.paycard{flex:1;min-width:150px;background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 15px}.paycard .ic{font-size:18px}.paycard .lb{font-family:Montserrat;font-weight:700;font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:.03em;margin:4px 0 6px}.paycard .vl2{font-size:13.5px;line-height:1.5}.pubgrid{display:grid;gap:12px;padding:0 14px 14px}.pcard{border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer}.pcimg{height:130px;background-size:cover;background-position:center;position:relative}.pcbd{position:absolute;top:8px;left:8px;font-family:Montserrat;font-weight:700;font-size:10px;padding:3px 8px;border-radius:99px;background:#FCEFD0;color:#B5780B}.pcbd.ok{background:#DFF3EC;color:#11936A}.pcb{padding:10px 11px}.pcn{font-family:Montserrat;font-weight:700;font-size:13px}.pcp{font-family:Montserrat;font-weight:800;font-size:15px;margin:2px 0 9px}.pcadd{width:100%;background:var(--blue);color:#fff;border:0;border-radius:9px;padding:9px;font-size:12px;font-weight:700;cursor:pointer}.pcadd:disabled{opacity:.45}.pubfoot{text-align:center;padding:12px;color:#9aa6c2;font-size:11px;border-top:1px solid var(--line)}'+
+'.modal{display:none;position:fixed;inset:0;background:rgba(7,26,82,.5);z-index:30;align-items:center;justify-content:center;padding:20px}.modal.on{display:flex}.mcard{background:#fff;border-radius:18px;padding:24px;width:480px;max-width:94vw;position:relative;max-height:92vh;overflow:auto}.x{position:absolute;top:12px;right:14px;border:0;background:#f0f0f0;width:32px;height:32px;border-radius:50%;font-size:20px;cursor:pointer;color:var(--soft);z-index:2}.drop{border:2px dashed var(--line);border-radius:12px;padding:24px;text-align:center;color:var(--soft);font-size:14px;cursor:pointer;margin-bottom:14px}.drop.drag{border-color:var(--blue);background:#EEF4FF}.dlist{border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin-bottom:14px}.dlist .r{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}.dlist .r:last-child{border-bottom:0}.saleinfo{border:1.5px solid #EEDFB0;background:#FFFBF0;border-radius:12px;padding:14px;margin-bottom:14px}.gal{height:240px;border-radius:13px;background-size:cover;background-position:center;margin-bottom:8px;cursor:zoom-in}.thumbs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.thumb{width:54px;height:54px;border-radius:9px;background-size:cover;background-position:center;cursor:pointer;border:2px solid transparent}.thumb.on{border-color:var(--blue)}.wabtn{flex:1;background:#25D366;color:#073d22;border:0;border-radius:11px;padding:12px;font-family:Montserrat;font-weight:700;cursor:pointer}.crow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.qtyc{display:flex;align-items:center;gap:8px}.qb{border:1px solid var(--line);background:#fff;width:28px;height:28px;border-radius:8px;font-size:16px;cursor:pointer}.qb:disabled{opacity:.4}.cx{border:0;background:#f4f4f4;width:26px;height:26px;border-radius:50%;cursor:pointer;color:#c0392b;font-size:16px}#lightbox .lbx{position:relative;max-width:94vw}#lightbox img{max-width:94vw;max-height:84vh;border-radius:12px;display:block}#lightbox .lbnav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.92);border:0;width:46px;height:46px;border-radius:50%;font-size:24px;cursor:pointer}#lightbox .lbprev{left:-8px}#lightbox .lbnext{right:-8px}'+
+'.vlfoot{max-width:1000px;margin:0 auto;text-align:center;padding:24px 20px 36px;color:#9aa6c2;font-size:12px;line-height:1.6}.vlfoot img{height:24px;vertical-align:middle;margin:0 5px}.vlfoot .dis{margin-top:8px}@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.tab{padding:12px 9px;font-size:13px}.device.web,.device.tablet{width:100%}}@media(max-width:520px){.grid{grid-template-columns:1fr}}';`;
+const SCRIPT2 = `
+(function(){
+var __r=document.getElementById('vroot');document.open=function(){};document.close=function(){};document.write=function(h){if(__r){__r.innerHTML=h;}};
+try{
+var V='https://vendeloo.vercel.app/Vendeloo_horizontal.png';
+function P(id,w,h){return 'https://images.unsplash.com/photo-'+id+'?auto=format&fit=crop&w='+w+'&h='+h+'&q=72';}
+function IMG(x,w,h){return (String(x).indexOf('http')===0||String(x).indexOf('blob:')===0)?x:P(x,w,h);}
+window.VL={
+ METODOS:['Nequi','Daviplata','PSE','Bre-B','Bancolombia','Transfiya','Bizum','PayPal','Efectivo'],
+ STORE:'El Clóset de Caro',SLUG:'vendeloo.shop/elclosetdecaro',editIdx:null,DEV:'web',CART:[],tmpImgs:[],
+ ITEMS:[
+  {n:'Chaqueta de cuero',p:'$120.000',imgs:['1551028719-00167b16eac5','1521223890158-f9f7c3d5d504'],s:'ok',on:true,mar:'Zara',med:'M',d:'Cuero auténtico, apenas usada.',qty:1,un:'unidad',dsc:15},
+  {n:'Zapatos de cuero',p:'$85.000',imgs:['1605733160314-4fc7dac4bb16','1542291026-7eec264c27ff'],s:'ok',on:true,mar:'',med:'42',d:'Suela en buen estado.',qty:1,un:'par',dsc:0},
+  {n:'Bolso de mano',p:'$75.000',imgs:['1598532163257-ae3c6b2524b6','1584917865442-de89df76afd3'],s:'ok',on:true,mar:'',med:'',d:'Espacioso.',qty:1,un:'unidad',dsc:0},
+  {n:'Vestido',p:'$60.000',imgs:['1595777457583-95e059d581b8'],s:'hold',on:true,mar:'Mango',med:'S',d:'Ideal para eventos.',qty:1,un:'unidad',dsc:0},
+  {n:'Chaqueta vintage',p:'$95.000',imgs:['1521223890158-f9f7c3d5d504','1551028719-00167b16eac5'],s:'ok',on:false,mar:'',med:'L',d:'Estilo retro.',qty:1,un:'unidad',dsc:0},
+  {n:'Bolso pequeño',p:'$50.000',imgs:['1584917865442-de89df76afd3','1598532163257-ae3c6b2524b6'],s:'ok',on:true,mar:'',med:'',d:'Perfecto para salir.',qty:3,un:'unidad',dsc:0}
+ ],
+ SALES:[
+  {d:'12 jun',c:'María Gómez',m:'Nequi',items:[{n:'Chaqueta de cuero',p:120000}],paid:120000},
+  {d:'15 jun',c:'Ana Torres',m:'Bancolombia',items:[{n:'Bolso de mano',p:75000},{n:'Vestido',p:60000}],paid:60000}
+ ]
+};
+if(window.__VLDATA){var D=window.__VLDATA;window.VL.STORE=D.store;window.VL.SLUG=D.slug;window.VL.ITEMS=D.items;window.VL.SALES=D.sales;if(D.metodos&&D.metodos.length){window.VL.METODOS=D.metodos;}}
+var ST={ok:{t:'Disponible',c:'#11936A',b:'#DFF3EC'},hold:{t:'Apartado',c:'#B5780B',b:'#FCEFD0'},vend:{t:'Vendido',c:'#5A6A8C',b:'#EAEDF5'},agot:{t:'Agotado temp.',c:'#9A7400',b:'#FFF8E6'},disc:{t:'Discontinuado',c:'#5A6A8C',b:'#EAEDF5'}};
+function money(a){return '$'+(a||0).toLocaleString('es-CO');}
+function num(s){return +String(s).replace(/[^0-9]/g,'')||0;}
+function val(id){var e=document.getElementById(id);return e?e.value:'';}
+function total(s){return s.items.reduce(function(a,b){return a+b.p;},0);}
+function stat(s){var t=total(s);if(t>0&&s.paid>=t)return{t:'Pagado',c:'#0c7a57',b:'#DFF3EC'};if(s.paid>0)return{t:'Parcial',c:'#B5780B',b:'#FCEFD0'};return{t:'Pendiente',c:'#9A7400',b:'#FFF8E6'};}
+function img1(it){return IMG(it.imgs[0],300,220);}
+function newP(it){return it.dsc?Math.round(num(it.p)*(1-it.dsc/100)):num(it.p);}
+function priceHTML(it){if(it.dsc)return '<span class="old">'+it.p+'</span>'+money(newP(it));return it.p;}
+function itemCard(it,i){var s=ST[it.s]||ST.ok;var sub=[it.mar,it.med,(it.qty>1?(it.qty+' '+(it.un||'uds')):'')].filter(Boolean).join(' · ');sub=sub?('<div class="isub">'+sub+'</div>'):'';var nf=(it.imgs&&it.imgs.length>1)?'<span class="nfoto">📷 '+it.imgs.length+'</span>':'';var dscb=it.dsc?'<div class="dscb">-'+it.dsc+'%</div>':'';return '<div class="item'+(it.on===false?' off':'')+'"><span class="apg">APAGADO</span><div class="ph" style="background-image:url('+img1(it)+')"><span class="bdg" style="color:'+s.c+';background:'+s.b+'">'+s.t+'</span>'+nf+'</div><div class="ib"><div class="inm">'+it.n+'</div>'+sub+'<div class="ipr">'+priceHTML(it)+'</div>'+dscb+'<div class="iact"><button class="mini edt" data-i="'+i+'">Editar</button><label class="actsw"><input type="checkbox" class="swk" data-i="'+i+'" '+(it.on!==false?'checked':'')+'><span></span></label></div></div></div>';}
+function salesRows(){return window.VL.SALES.map(function(s,i){var t=total(s);var st=stat(s);return '<tr class="srow" data-i="'+i+'"><td>'+s.d+'</td><td>'+s.c+'</td><td>'+s.items.length+' art.</td><td><b>'+money(t)+'</b></td><td>'+money(s.paid)+'</td><td><span class="badge2" style="color:'+st.c+';background:'+st.b+'">'+st.t+'</span></td><td><button class="mini ver" data-i="'+i+'">Ver ›</button></td></tr>';}).join('');}
+function chipList(){return window.VL.METODOS.map(function(m,i){return '<label class="chip"><input type="checkbox" class="payck" value="'+m+'" '+(i<4?'checked':'')+'><span>'+m+'</span></label>';}).join('');}
+function metOpts(){return window.VL.METODOS.map(function(m){return '<option>'+m+'</option>';}).join('');}
+function pickRows(){return window.VL.ITEMS.map(function(it){return '<label class="pick"><input type="checkbox" class="pk" data-p="'+newP(it)+'"><span>'+it.n+'</span><b>'+money(newP(it))+'</b></label>';}).join('');}
+function itemByName(n){for(var i=0;i<window.VL.ITEMS.length;i++){if(window.VL.ITEMS[i].n===n)return window.VL.ITEMS[i];}return null;}
+function cartUnits(){return window.VL.CART.reduce(function(a,b){return a+(b.qty||1);},0);}
+function cartTotal(){return window.VL.CART.reduce(function(a,b){return a+b.p*(b.qty||1);},0);}
+function inCart(n){for(var i=0;i<window.VL.CART.length;i++){if(window.VL.CART[i].n===n)return window.VL.CART[i];}return null;}
+var H='<!DOCTYPE html><html lang=es><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PANEL · Vendeloo</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600&display=swap" rel=stylesheet><style>'+window.__CSS+'</style></head><body>'+
+'<div class="top"><div class="in"><div class="brand"><div class="bdot">'+(window.VL.STORE||'V').charAt(0).toUpperCase()+'</div><div class="bname">'+window.VL.STORE+'<small>'+window.VL.SLUG+'</small></div></div><img id="vlbrand" src="'+V+'" alt="Vendeloo"><div class="lang"><button class="on">🇪🇸</button><button title="pronto">🇬🇧</button><button title="pronto">🇧🇷</button></div><button class="logout">Salir</button></div></div>'+
+'<div style="background:#fff;border-bottom:1px solid var(--line)"><div class="tabs"><button class="tab on" data-t="cat">Mi catálogo</button><button class="tab" data-t="config">Configuración</button><button class="tab" data-t="tienda">Mi tienda</button><button class="tab" data-t="cuentas">Cuentas</button></div></div>'+
+'<div class="wrap">'+
+'<section class="panel on" id="p-cat"><div class="limit"><b>6 de 25 artículos</b><div class="bar"><i></i></div><span>Vence en <b>18 días</b></span><button class="ampl amplbtn">Ampliar 4 semanas</button></div><div class="tools"><h2>Mi catálogo</h2><button class="add" id="addbtn">+ Añadir artículo</button></div><div class="grid" id="grid"></div></section>'+
+'<section class="panel" id="p-config"><div class="tools"><h2>Configuración</h2></div>'+
+'<div class="plancard"><div><div class="pl">Plan Medio</div><div class="pm">Hasta 25 artículos · vence el 5 jul 2026 (18 días)</div></div><button class="ampl amplbtn">Ampliar 4 semanas</button></div>'+
+'<div class="card" style="margin-bottom:18px"><div class="sec">Tus datos (vendedor)</div><div class="fld"><label>Nombre completo</label><input value="Carolina Restrepo" disabled></div><div class="row2"><div class="fld"><label>Documento</label><input value="C.C. 1020304050" disabled></div><div class="fld"><label>País</label><input value="Colombia" disabled></div></div><div class="fld"><label>Correo (tu usuario)</label><input value="caro@ejemplo.com" disabled></div><button class="lock" onclick="alert(\'(Maqueta) Se enviaría una solicitud de cambio de datos al superadmin para aprobación.\')">🔒 Solicitar cambio de datos</button></div>'+
+'<div class="card" style="margin-bottom:18px"><div class="sec">Tu catálogo</div><div class="fld"><label>Nombre de la tienda</label><input id="cfgName" value="'+window.VL.STORE+'"></div><div class="fld"><label>Tu link público</label><div class="linkbox">vendeloo.shop/elclosetdecaro <button class="ghost" style="margin-left:auto;padding:6px 12px;font-size:12px">Copiar</button></div></div><div class="fld"><label>Descripción</label><input id="cfgDesc" value="Ropa de segunda mano en buen estado · envíos a todo el país"></div><div class="row2"><div class="fld"><label>Plantilla</label><select id="cfgTpl"><option>Clásica</option><option>Minimal</option><option>Color</option></select></div><div class="fld"><label>Columnas</label><div class="colsel" id="cols"><button class="colbtn" data-c="1">1</button><button class="colbtn on" data-c="2">2</button><button class="colbtn" data-c="3">3</button></div></div></div><div class="fld"><label>Mostrar descuentos como</label><select id="cfgDsc"><option>Porcentaje (-15%)</option><option>Valor ($18.000)</option><option>Ambos</option></select></div></div>'+
+'<div class="card" style="margin-bottom:18px"><div class="sec">Cobro y entrega</div><div class="fld"><label>Tu WhatsApp</label><input id="cfgWA" value="+57 300 123 4567"></div><div class="fld"><label>¿Cómo te pueden pagar? Marca los que uses</label><div class="chips" id="cfgPays">'+chipList()+'</div></div><div class="fld"><label>Tu link de pago (PSE/Nequi/Bre-B, opcional)</label><input placeholder="Pega tu link de pago. Si no, lo negocias por WhatsApp."></div><div class="row2"><div class="fld"><label>Entrega</label><select id="envtipo"><option>Solo en persona</option><option selected>Envío con costo</option><option>Envío gratis</option></select></div><div class="fld"><label>Costo del envío</label><input id="envcost" value="$12.000"></div></div><label class="chip" style="margin-top:4px"><input type="checkbox" id="askaddr" checked><span>Pedir la dirección de envío al comprador</span></label></div>'+
+'<button class="save" id="cfgsave">Guardar cambios</button> <button class="ghost" id="vercat">Ver mi tienda</button></section>'+
+'<section class="panel" id="p-tienda"><div class="tools"><h2>Mi tienda</h2><span style="color:var(--soft);font-size:13px">Así ve tu link público cualquier comprador</span></div><div class="devbar"><button class="devbtn on" data-d="web">💻 Web</button><button class="devbtn" data-d="tablet">▭ Tablet</button><button class="devbtn" data-d="phone">📱 Móvil</button></div><div class="device web" id="device"></div></section>'+
+'<section class="panel" id="p-cuentas"><div class="tools"><h2>Cuentas</h2><button class="dlbtn" id="dlcsv">⬇ Exportar CSV</button><button class="add" id="msale">+ Registrar venta</button></div><p style="color:var(--soft);font-size:14px;margin-bottom:14px">Toca una fila para ver el detalle, registrar pagos y descargar la nota de caja en PDF.</p><div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Comprador</th><th>Artículos</th><th>Total</th><th>Pagado</th><th>Estado</th><th></th></tr></thead><tbody id="sbody"></tbody></table></div><div class="sumrow"><div class="sum cob"><div class="l">Cobrado</div><div class="v" id="cob">$0</div></div><div class="sum pen"><div class="l">Pendiente</div><div class="v" id="pen">$0</div></div><div class="sum"><div class="l">Total vendido</div><div class="v" id="tot">$0</div></div></div></section>'+
+'</div>'+
+'<div class="vlfoot">Tu catálogo funciona con <img src="'+V+'" alt="Vendeloo"><div class="dis">© 2026 Vendeloo · vendeloo.shop — Vendeloo es <b>solo la plataforma</b>. La venta, el cobro y la entrega son del vendedor.</div></div>'+
+'<div class="modal" id="addmodal"><div class="mcard"><button class="x" data-cl="addmodal">×</button><h3 id="addtitle" style="margin-bottom:16px">Añadir artículo</h3><div class="drop" id="drop">📷 Toca para subir fotos o arrástralas aquí</div><div class="thumbs" id="upthumbs"></div><div class="fld"><label>Nombre</label><input id="an"></div><div class="row2"><div class="fld"><label>Precio</label><input id="ap" placeholder="$0"></div><div class="fld"><label>Estado</label><select id="as"><option>Disponible</option><option>Apartado</option><option>Agotado temp.</option><option>Discontinuado</option><option>Vendido</option></select></div></div><div class="saleinfo" id="saleinfo" style="display:none"><div style="font-family:Montserrat;font-weight:700;font-size:13px;margin-bottom:10px">Datos de la venta (obligatorio para Vendido)</div><div class="fld" style="margin-bottom:10px"><label>Comprador</label><input id="vcomp"></div><div class="row2"><div class="fld" style="margin-bottom:0"><label>Método</label><select id="vmet">'+metOpts()+'</select></div><div class="fld" style="margin-bottom:0"><label>Pagado</label><input id="vpaid" placeholder="$0"></div></div></div><div class="row2"><div class="fld"><label>Marca</label><input id="amar"></div><div class="fld"><label>Talla / Medidas</label><input id="amed"></div></div><div class="row2"><div class="fld"><label>Cantidad</label><input id="acant" value="1"></div><div class="fld"><label>Descuento %</label><input id="adsc" placeholder="0"></div></div><div class="fld"><label>Descripción</label><input id="ad"></div><button class="save" id="asave" style="width:100%">Guardar</button></div></div>'+
+'<div class="modal" id="salemodal"><div class="mcard"><button class="x" data-cl="salemodal">×</button><h3 style="margin-bottom:6px">Registrar venta</h3><p style="color:var(--soft);font-size:13px;margin-bottom:16px">Marca artículos, comprador y lo pagado.</p><div class="fld"><label>Comprador</label><input id="scl"></div><div class="fld"><label>Artículos</label><div id="picks">'+pickRows()+'</div></div><div class="totline"><span>Total</span><span id="stot">$0</span></div><div class="row2"><div class="fld"><label>Método</label><select id="smt">'+metOpts()+'</select></div><div class="fld"><label>Pagado ahora</label><input id="spaid" placeholder="$0"></div></div><button class="save" id="ssave" style="width:100%">Guardar venta</button></div></div>'+
+'<div class="modal" id="detmodal"><div class="mcard"><button class="x" data-cl="detmodal">×</button><div id="detbody"></div></div></div>'+
+'<div class="modal" id="amplmodal"><div class="mcard"><button class="x" data-cl="amplmodal">×</button><h3 style="margin-bottom:6px">Ampliar catálogo</h3><p style="color:var(--soft);font-size:13px;margin-bottom:16px">Añade 4 semanas más, sin volver a subir nada.</p><div class="dlist"><div class="r"><span>Plan Medio · +4 semanas</span><b>$70.000</b></div><div class="r"><span>Nuevo vencimiento</span><b>2 ago 2026</b></div></div><button class="save" id="amplok" style="width:100%">Pagar y ampliar</button></div></div>'+
+'<div class="modal" id="prodmodal"><div class="mcard"><button class="x" data-cl="prodmodal">×</button><div id="prodbody"></div></div></div>'+
+'<div class="modal" id="cartmodal"><div class="mcard"><button class="x" data-cl="cartmodal">×</button><h3 style="margin-bottom:14px">Tu pedido</h3><div id="cartbody"></div></div></div>'+
+'<div class="modal" id="buyermodal"><div class="mcard"><button class="x" data-cl="buyermodal">×</button><h3 style="margin-bottom:6px">Tus datos para el pedido</h3><p style="color:var(--soft);font-size:13px;margin-bottom:16px">Los enviamos junto al pedido por WhatsApp. El vendedor te dirá cómo pagar.</p><div class="fld"><label>Tu nombre</label><input id="bname"></div><div class="fld"><label>Tu teléfono</label><input id="bphone"></div><div class="fld" id="baddrwrap"><label>Dirección de envío</label><input id="baddr" placeholder="Calle, número, ciudad"></div><button class="save" id="bsend" style="width:100%">📲 Enviar pedido por WhatsApp</button></div></div>'+
+'<div class="modal" id="lightbox"><button class="x" data-cl="lightbox" style="position:fixed;top:18px;right:20px">×</button><div class="lbx"><button class="lbnav lbprev">‹</button><img id="lbimg"><button class="lbnav lbnext">›</button></div></div>'+
+'</body></html>';
+document.open();document.write(H);document.close();
+var sj=document.createElement('script');sj.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';document.head.appendChild(sj);
 
-export default async function SellerHome() {
-  const supabase = await createClient();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth?.user) redirect('/app/login');
+function open(id){document.getElementById(id).classList.add('on');}
+function close(id){document.getElementById(id).classList.remove('on');}
+function go(t){['cat','config','tienda','cuentas'].forEach(function(k){document.getElementById('p-'+k).classList.toggle('on',k===t);});document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-t')===t);});if(t==='tienda')renderTienda();}
+function cfgCols(){var b=document.querySelector('#cols .colbtn.on');return b?+b.getAttribute('data-c'):2;}
+function cfgPays(){var a=[];document.querySelectorAll('#cfgPays .payck:checked').forEach(function(c){a.push(c.value);});return a;}
+function shipping(){return val('envtipo')!=='Solo en persona';}
+function cfgEnv(){var t=val('envtipo');if(t==='Envío con costo')return (val('envcost')||'Con costo')+' a tu dirección';if(t==='Envío gratis')return 'Envío gratis a tu dirección';return 'Solo entrega en persona';}
+function renderTienda(){var v=window.VL;var dev=v.DEV;var gc=dev==='phone'?1:(dev==='tablet'?2:cfgCols());var pays=cfgPays();var items=v.ITEMS.filter(function(it){return it.s!=='vend'&&it.on!==false;});var grid=items.map(function(it){var hold=it.s==='hold'||(it.qty||1)<=0;var stockTxt=(it.qty>1)?'<div style="font-size:11px;color:var(--soft);margin:-4px 0 6px">Quedan '+it.qty+'</div>':'';return '<div class="pcard" data-n="'+it.n+'"><div class="pcimg" style="background-image:url('+img1(it)+')">'+(hold?'<span class="pcbd">Apartado</span>':'<span class="pcbd ok">Disponible</span>')+'</div><div class="pcb"><div class="pcn">'+it.n+'</div><div class="pcp">'+priceHTML(it)+'</div>'+stockTxt+'<button class="pcadd" data-n="'+it.n+'" data-p="'+newP(it)+'" '+(hold?'disabled':'')+'>+ Añadir al pedido</button></div></div>';}).join('');document.getElementById('device').className='device '+dev;document.getElementById('device').innerHTML='<div class="pub"><div class="pubcover"><button class="cartbtn" id="opencart">🛒 Pedido<span class="cb">'+cartUnits()+'</span></button><h3>'+(val('cfgName')||v.STORE)+'</h3><p>'+val('cfgDesc')+'</p><span class="tip">🛒 Toca un artículo para verlo y añadirlo al pedido</span></div><div class="paybox"><div class="paycard"><div class="ic">💳</div><div class="lb">Cómo pagar</div><div class="vl2">'+(pays.length?pays.join(', '):'A coordinar')+'</div></div><div class="paycard"><div class="ic">🚚</div><div class="lb">Entrega</div><div class="vl2">'+cfgEnv()+'</div></div></div><div class="pubgrid" style="grid-template-columns:repeat('+gc+',1fr)">'+grid+'</div><div class="pubfoot">Funciona con Vendeloo · vendeloo.shop</div></div>';document.querySelectorAll('.pcadd').forEach(function(b){b.onclick=function(e){e.stopPropagation();addCart(b.getAttribute('data-n'),+b.getAttribute('data-p'));};});document.querySelectorAll('.pcard').forEach(function(c){c.onclick=function(){prodView(c.getAttribute('data-n'));};});document.getElementById('opencart').onclick=function(){cartView();};}
+function addCart(n,p){var it=itemByName(n);var avail=it?(it.qty||1):1;var line=inCart(n);if((line?line.qty:0)>=avail){alert('Solo quedan '+avail+' de "'+n+'".');return;}if(line)line.qty++;else window.VL.CART.push({n:n,p:p,qty:1});renderTienda();}
+function prodView(n){var it=itemByName(n);if(!it)return;var imgs=it.imgs;window.VL.pv={imgs:imgs,idx:0};document.getElementById('prodbody').innerHTML='<div class="gal" id="galmain" style="background-image:url('+IMG(imgs[0],600,450)+')"></div><div class="thumbs" id="galthumbs">'+imgs.map(function(im,k){return '<div class="thumb'+(k===0?' on':'')+'" data-k="'+k+'" style="background-image:url('+IMG(im,120,120)+')"></div>';}).join('')+'</div><h3 style="font-size:20px">'+it.n+'</h3><div style="color:var(--soft);font-size:13px;margin:2px 0 8px">'+[it.mar,it.med].filter(Boolean).join(' · ')+'</div><div style="font-family:Montserrat;font-weight:800;font-size:22px;margin-bottom:8px">'+priceHTML(it)+'</div><p style="font-size:14px;margin-bottom:18px">'+(it.d||'')+'</p><div style="display:flex;gap:10px"><button class="wabtn" id="pwa">💬 Preguntar por WhatsApp</button><button class="save" id="padd" style="flex:1;margin:0">+ Añadir al pedido</button></div>';open('prodmodal');document.querySelectorAll('#galthumbs .thumb').forEach(function(tt){tt.onclick=function(){var k=+tt.getAttribute('data-k');document.getElementById('galmain').style.backgroundImage='url('+IMG(imgs[k],600,450)+')';document.querySelectorAll('#galthumbs .thumb').forEach(function(x){x.classList.remove('on');});tt.classList.add('on');window.VL.pv.idx=k;};});document.getElementById('galmain').onclick=function(){openLB(imgs,window.VL.pv.idx);};document.getElementById('pwa').onclick=function(){alert('Se abriría WhatsApp del vendedor:\n\n"Hola! Tengo una duda sobre: '+it.n+'"');};document.getElementById('padd').onclick=function(){addCart(it.n,newP(it));close('prodmodal');};}
+function openLB(imgs,idx){window.VL.lb={imgs:imgs,idx:idx};document.getElementById('lbimg').src=IMG(imgs[idx],1000,800);open('lightbox');}
+function cartView(){var c=window.VL.CART;var t=cartTotal();var body;if(!c.length){body='<p style="color:var(--soft);font-size:14px">Tu pedido está vacío.</p>';}else{body=c.map(function(x,idx){var av=(itemByName(x.n)||{}).qty||1;return '<div class="crow"><div style="flex:1"><div>'+x.n+'</div><div style="font-size:12px;color:var(--soft)">'+money(x.p)+' c/u</div></div><div class="qtyc"><button class="qb" data-d="-1" data-idx="'+idx+'">−</button><b>'+x.qty+'</b><button class="qb" data-d="1" data-idx="'+idx+'" '+(x.qty>=av?'disabled':'')+'>+</button></div><b style="font-family:Montserrat;min-width:80px;text-align:right">'+money(x.p*x.qty)+'</b><button class="cx" data-idx="'+idx+'">×</button></div>';}).join('')+'<div class="totline"><span>Total</span><span>'+money(t)+'</span></div><button class="save" id="docart" style="width:100%">📲 Hacer pedido por WhatsApp</button>';}document.getElementById('cartbody').innerHTML=body;open('cartmodal');document.querySelectorAll('#cartbody .cx').forEach(function(b){b.onclick=function(){window.VL.CART.splice(+b.getAttribute('data-idx'),1);renderTienda();cartView();};});document.querySelectorAll('#cartbody .qb').forEach(function(b){b.onclick=function(){var idx=+b.getAttribute('data-idx');var line=window.VL.CART[idx];var av=(itemByName(line.n)||{}).qty||1;line.qty+=(+b.getAttribute('data-d'));if(line.qty<=0)window.VL.CART.splice(idx,1);else if(line.qty>av)line.qty=av;renderTienda();cartView();};});var dc=document.getElementById('docart');if(dc)dc.onclick=function(){close('cartmodal');document.getElementById('baddrwrap').style.display=(shipping()&&document.getElementById('askaddr').checked)?'block':'none';open('buyermodal');};}
+function drawItems(){document.getElementById('grid').innerHTML=window.VL.ITEMS.map(itemCard).join('');document.querySelectorAll('.edt').forEach(function(b){b.onclick=function(){editItem(+b.getAttribute('data-i'));};});document.querySelectorAll('.swk').forEach(function(c){c.onchange=function(){window.VL.ITEMS[+c.getAttribute('data-i')].on=c.checked;drawItems();};});}
+function showUp(){document.getElementById('upthumbs').innerHTML=window.VL.tmpImgs.map(function(u){return '<div class="thumb" style="background-image:url('+IMG(u,120,120)+')"></div>';}).join('');}
+function fillForm(it){window.VL.tmpImgs=it&&it.imgs?it.imgs.slice():[];showUp();document.getElementById('an').value=it?it.n:'';document.getElementById('ap').value=it?it.p:'';document.getElementById('amar').value=it&&it.mar||'';document.getElementById('amed').value=it&&it.med||'';document.getElementById('ad').value=it&&it.d||'';document.getElementById('acant').value=it&&it.qty||1;document.getElementById('adsc').value=it&&it.dsc||'';document.getElementById('as').value=it?({ok:'Disponible',hold:'Apartado',agot:'Agotado temp.',disc:'Discontinuado',vend:'Vendido'}[it.s]):'Disponible';document.getElementById('vcomp').value='';document.getElementById('vpaid').value='';toggleSale();}
+function toggleSale(){document.getElementById('saleinfo').style.display=document.getElementById('as').value==='Vendido'?'block':'none';}
+function editItem(i){window.VL.editIdx=i;document.getElementById('addtitle').textContent='Editar artículo';fillForm(window.VL.ITEMS[i]);open('addmodal');}
+function saleTotal(){var t=0;document.querySelectorAll('#picks .pk:checked').forEach(function(c){t+=+c.getAttribute('data-p');});document.getElementById('stot').textContent=money(t);document.getElementById('spaid').value=money(t);return t;}
+function drawSales(){document.getElementById('sbody').innerHTML=salesRows();document.querySelectorAll('.srow').forEach(function(r){r.onclick=function(){detail(+r.getAttribute('data-i'));};});var cob=0,pen=0,tot=0;window.VL.SALES.forEach(function(s){var t=total(s);tot+=t;cob+=Math.min(s.paid,t);pen+=Math.max(t-s.paid,0);});document.getElementById('cob').textContent=money(cob);document.getElementById('pen').textContent=money(pen);document.getElementById('tot').textContent=money(tot);}
+function detail(i){var s=window.VL.SALES[i];var t=total(s);var pend=Math.max(t-s.paid,0);var st=stat(s);var rows=s.items.map(function(x){return '<div class="r"><span>'+x.n+'</span><b>'+money(x.p)+'</b></div>';}).join('');document.getElementById('detbody').innerHTML='<h3 style="margin-bottom:4px">'+s.c+'</h3><p style="color:var(--soft);font-size:13px;margin-bottom:14px">'+s.d+' · '+s.m+' · <span class="badge2" style="color:'+st.c+';background:'+st.b+'">'+st.t+'</span></p><div class="dlist">'+rows+'</div><div class="dlist"><div class="r"><span>Total</span><b>'+money(t)+'</b></div><div class="r"><span>Pagado</span><b style="color:#0c7a57">'+money(s.paid)+'</b></div><div class="r"><span>Pendiente</span><b style="color:#9A7400">'+money(pend)+'</b></div></div>'+(pend>0?'<button class="save" id="payall" style="width:100%;margin-bottom:8px">Marcar todo pagado</button>':'<p style="color:#0c7a57;font-weight:600;margin-bottom:8px">✓ Venta saldada</p>')+'<button class="dlbtn" id="detpdf" style="width:100%">⬇ Descargar nota de caja (PDF)</button>';open('detmodal');var pa=document.getElementById('payall');if(pa)pa.onclick=function(){s.paid=t;drawSales();detail(i);};document.getElementById('detpdf').onclick=function(){downloadNota(i);};}
+function downloadNota(i){if(!window.jspdf){alert('Generando PDF, espera un segundo y vuelve a tocar.');return;}var s=window.VL.SALES[i];var t=total(s);var pend=Math.max(t-s.paid,0);var jsPDF=window.jspdf.jsPDF;var doc=new jsPDF({unit:'pt',format:'a5'});var L=40,R=379,MID=(L+R)/2;function build(){doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(window.VL.STORE,R,44,{align:'right'});doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(120);doc.text(window.VL.SLUG,R,58,{align:'right'});doc.setTextColor(30);doc.setDrawColor(21,101,255);doc.setLineWidth(1.4);doc.line(L,92,R,92);doc.setFontSize(9);doc.setTextColor(130);doc.text('NOTA DE CAJA',L,112);doc.setTextColor(30);doc.setFontSize(11);doc.text('Comprador: '+s.c,L,134);doc.text('Fecha: '+s.d+'     Metodo: '+s.m,L,150);var y=176;doc.setDrawColor(225);doc.line(L,y-12,R,y-12);s.items.forEach(function(x){doc.text(x.n,L,y);doc.text(money(x.p),R,y,{align:'right'});doc.setDrawColor(238);doc.line(L,y+6,R,y+6);y+=22;});y+=4;doc.setFont('helvetica','bold');doc.text('TOTAL',L,y);doc.text(money(t),R,y,{align:'right'});y+=18;doc.setFont('helvetica','normal');doc.text('Pagado',L,y);doc.text(money(s.paid),R,y,{align:'right'});y+=16;doc.text('Pendiente',L,y);doc.text(money(pend),R,y,{align:'right'});y+=40;doc.setFontSize(8);doc.setTextColor(150);doc.text('Este documento es una nota de caja, no una factura.',MID,y,{align:'center'});doc.text('Vendeloo es solo la plataforma · vendeloo.shop',MID,y+12,{align:'center'});doc.save('nota-'+s.c.replace(/ /g,'_')+'.pdf');}var img=new Image();img.crossOrigin='anonymous';img.onload=function(){try{var cv=document.createElement('canvas');cv.width=img.width;cv.height=img.height;cv.getContext('2d').drawImage(img,0,0);doc.addImage(cv.toDataURL('image/png'),'PNG',L,30,120,120*img.height/img.width);}catch(e){}build();};img.onerror=function(){build();};img.src=V;}
+function dl(name,txt){var b=new Blob([txt],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},100);}
+function csv(){var rows=[['Fecha','Comprador','Articulos','Total','Pagado','Pendiente','Estado','Metodo']];window.VL.SALES.forEach(function(s){var t=total(s);rows.push([s.d,s.c,s.items.map(function(x){return x.n;}).join(' | '),t,s.paid,t-s.paid,stat(s).t,s.m]);});dl('movimientos-vendeloo.csv',rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n'));}
 
-  const OWNER_EMAIL = process.env.OWNER_EMAIL || '';
-  const isOwner = !!OWNER_EMAIL && auth.user.email?.toLowerCase() === OWNER_EMAIL.toLowerCase();
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){go(b.getAttribute('data-t'));};});
+document.querySelectorAll('[data-cl]').forEach(function(x){x.onclick=function(){close(x.getAttribute('data-cl'));};});
+document.querySelectorAll('.modal').forEach(function(m){m.onclick=function(e){if(e.target===m)close(m.id);};});
+document.querySelector('#lightbox .lbprev').onclick=function(){var Lb=window.VL.lb;if(!Lb)return;Lb.idx=(Lb.idx-1+Lb.imgs.length)%Lb.imgs.length;document.getElementById('lbimg').src=IMG(Lb.imgs[Lb.idx],1000,800);};
+document.querySelector('#lightbox .lbnext').onclick=function(){var Lb=window.VL.lb;if(!Lb)return;Lb.idx=(Lb.idx+1)%Lb.imgs.length;document.getElementById('lbimg').src=IMG(Lb.imgs[Lb.idx],1000,800);};
+document.querySelectorAll('.amplbtn').forEach(function(b){b.onclick=function(){open('amplmodal');};});
+document.getElementById('amplok').onclick=function(){close('amplmodal');alert('(Maqueta) Aquí iría tu link de pago. Al confirmarse, suma 4 semanas.');};
+document.getElementById('as').onchange=toggleSale;
+var drop=document.getElementById('drop'),fi=null;
+drop.onclick=function(){if(!fi){fi=document.createElement('input');fi.type='file';fi.multiple=true;fi.accept='image/*';fi.style.display='none';document.body.appendChild(fi);fi.onchange=function(){[].slice.call(fi.files).forEach(function(f){if(f.type.indexOf('image')===0)window.VL.tmpImgs.push(URL.createObjectURL(f));});showUp();};}fi.click();};
+drop.ondragover=function(e){e.preventDefault();drop.classList.add('drag');};drop.ondragleave=function(){drop.classList.remove('drag');};drop.ondrop=function(e){e.preventDefault();drop.classList.remove('drag');[].slice.call(e.dataTransfer.files).forEach(function(f){if(f.type.indexOf('image')===0)window.VL.tmpImgs.push(URL.createObjectURL(f));});showUp();};
+document.getElementById('addbtn').onclick=function(){window.VL.editIdx=null;document.getElementById('addtitle').textContent='Añadir artículo';fillForm(null);open('addmodal');};
+document.getElementById('asave').onclick=function(){var mp={Disponible:'ok',Apartado:'hold','Agotado temp.':'agot',Discontinuado:'disc',Vendido:'vend'};var sc=mp[document.getElementById('as').value];if(sc==='vend'&&!val('vcomp')){alert('Para marcar como Vendido tienes que poner el comprador.');return;}var imgs=window.VL.tmpImgs.length?window.VL.tmpImgs.slice():null;var obj={n:val('an')||'Artículo',p:val('ap')||'$0',mar:val('amar'),med:val('amed'),d:val('ad'),qty:num(val('acant'))||1,un:'unidad',dsc:num(val('adsc')),s:sc,on:true};if(window.VL.editIdx!=null){var old=window.VL.ITEMS[window.VL.editIdx];obj.imgs=imgs||old.imgs;obj.on=old.on;window.VL.ITEMS[window.VL.editIdx]=obj;}else{obj.imgs=imgs||['1595777457583-95e059d581b8'];window.VL.ITEMS.push(obj);}if(sc==='vend'){window.VL.SALES.push({d:new Date().getDate()+' jun',c:val('vcomp'),m:val('vmet'),items:[{n:obj.n,p:newP(obj)}],paid:num(val('vpaid'))});drawSales();}close('addmodal');drawItems();};
+document.getElementById('msale').onclick=function(){document.getElementById('scl').value='';document.querySelectorAll('#picks .pk').forEach(function(c){c.checked=false;});saleTotal();open('salemodal');};
+document.querySelectorAll('#picks .pk').forEach(function(c){c.onchange=saleTotal;});
+document.getElementById('ssave').onclick=function(){var items=[];document.querySelectorAll('#picks .pk:checked').forEach(function(c){items.push({n:c.parentNode.querySelector('span').textContent,p:+c.getAttribute('data-p')});});if(!items.length){alert('Marca al menos un artículo.');return;}window.VL.SALES.push({d:new Date().getDate()+' jun',c:val('scl')||'Comprador',m:val('smt'),items:items,paid:num(val('spaid'))});close('salemodal');drawSales();go('cuentas');};
+document.getElementById('bsend').onclick=function(){window.VL.CART.forEach(function(x){var it=itemByName(x.n);if(it&&it.s==='ok'&&x.qty>=(it.qty||1))it.s='hold';});close('buyermodal');alert('✅ Pedido recibido.\n\nCuando el vendedor verifique tu pago se pondrá en contacto. Dudas por WhatsApp.\n\n→ Los artículos quedan APARTADOS.');window.VL.CART=[];renderTienda();};
+document.getElementById('dlcsv').onclick=csv;
+document.getElementById('cfgsave').onclick=function(){alert('Configuración guardada. Míralo en "Mi tienda".');};
+document.getElementById('vercat').onclick=function(){go('tienda');};
+document.getElementById('cols').onclick=function(e){var b=e.target.closest('.colbtn');if(!b)return;document.querySelectorAll('#cols .colbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');};
+document.querySelectorAll('.devbtn').forEach(function(b){b.onclick=function(){window.VL.DEV=b.getAttribute('data-d');document.querySelectorAll('.devbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');renderTienda();};});
+drawItems();drawSales();
+}catch(err){document.body.innerHTML='<pre style=padding:20px>ERROR: '+err.message+'</pre>';}
+})();`;
 
-  const { data: sellerData } = await supabase
-    .from('sellers').select('*').eq('user_id', auth.user.id).maybeSingle();
-  const seller = sellerData as Seller | null;
-
-  const { data: itemsData } = seller
-    ? await supabase.from('items').select('*').eq('seller_id', seller.id).order('created_at', { ascending: false })
-    : { data: [] as Item[] };
-  const items = (itemsData as Item[]) ?? [];
-
-  const ventasRes = seller
-    ? await supabase.from('ventas').select('*').eq('seller_id', seller.id).order('created_at', { ascending: false }).limit(20)
-    : null;
-  const ventas = (ventasRes?.data ?? []) as Array<{ id: string; item_name: string | null; amount: number; paid: number; buyer: string | null }>;
-  const totalVendido = ventas.reduce((a, v) => a + (v.amount || 0), 0);
-  const totalCobrado = ventas.reduce((a, v) => a + (v.paid || 0), 0);
-
-  const dias = seller?.expires_at ? Math.ceil((new Date(seller.expires_at).getTime() - Date.now()) / 86400000) : null;
-  const limit = seller?.item_limit || 0;
-  const lleno = items.length >= limit;
-
-  if (!seller) {
-    return (
-      <main className="wrap" style={{ padding: '48px 20px' }}>
-        <h1 style={{ fontSize: 24, marginBottom: 8 }}>Tu cuenta aún no tiene catálogo</h1>
-        <p style={{ color: 'var(--ink-soft)' }}>Estamos terminando de configurarlo. Te avisamos en cuanto esté listo.</p>
-        <div style={{ marginTop: 20 }}><SignOut /></div>
-      </main>
-    );
-  }
-
-  return (
-    <main style={{ paddingBottom: 80 }}>
-      <div style={{ background: '#fff', borderBottom: '1px solid var(--line)' }}>
-        <div className="wrap" style={{ padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 72 }}>
-          <img src="/Vendeloo_horizontal.png" alt="Vendeloo" style={{ height: 44 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            {isOwner && <Link href="/panel" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 700 }}>← Volver al panel</Link>}
-            <SignOut />
-          </div>
-        </div>
-      </div>
-      <header style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))', color: '#fff', padding: '26px 0' }}>
-        <div className="wrap" style={{ padding: '0 20px' }}>
-          <h1 style={{ fontSize: 'clamp(26px,5vw,38px)', color: '#fff' }}>{seller.name}</h1>
-          <a href={'/' + seller.slug} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', opacity: 0.9, fontSize: 14, fontWeight: 600 }}>
-            vendeloo.shop/{seller.slug} ↗
-          </a>
-        </div>
-      </header>
-
-      <div className="wrap vtabs" style={{ padding: '0 20px' }}>
-        <input className="vt" type="radio" name="vtab" id="vt-cat" defaultChecked />
-        <input className="vt" type="radio" name="vtab" id="vt-cfg" />
-        <input className="vt" type="radio" name="vtab" id="vt-cta" />
-
-        <div className="vtabbar">
-          <label className="vtab" htmlFor="vt-cat">Mi catálogo</label>
-          <label className="vtab" htmlFor="vt-cfg">Configuración</label>
-          <label className="vtab" htmlFor="vt-cta">Cuentas</label>
-        </div>
-
-        <section className="vpanel vpanel-cat">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
-            <div>
-              <strong style={{ fontFamily: 'var(--display)' }}>{items.length} de {limit} artículos</strong>
-              <span style={{ color: 'var(--ink-soft)', fontSize: 14 }}>{dias === null ? '' : '  ·  vence en ' + dias + ' días'}</span>
-            </div>
-            <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>{lleno ? 'Plan lleno' : 'Plan ' + (seller.plan || '')}</span>
-          </div>
-
-          {!lleno ? (
-            <details style={{ marginBottom: 18 }}>
-              <summary style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--blue)' }}>+ Añadir artículo</summary>
-              <form action={crearItem} style={formGrid}>
-                <input name="name" placeholder="Nombre" required style={inp} />
-                <input name="price" type="number" placeholder="Precio" style={{ ...inp, maxWidth: 120 }} />
-                <select name="estado" defaultValue="disp" style={{ ...inp, maxWidth: 150 }}>
-                  <option value="disp">Disponible</option>
-                  <option value="apar">Apartado</option>
-                  <option value="vend">Vendido</option>
-                </select>
-                <input name="brand" placeholder="Marca" style={{ ...inp, maxWidth: 130 }} />
-                <input name="dims" placeholder="Medidas/talla" style={{ ...inp, maxWidth: 130 }} />
-                <input name="note" placeholder="Descripción" style={inp} />
-                <button type="submit" className="btn btn--primary" style={{ padding: '10px 18px' }}>Añadir</button>
-              </form>
-            </details>
-          ) : (
-            <p style={{ color: 'var(--gone)', fontSize: 13, marginBottom: 18 }}>Llegaste al límite de tu plan ({limit}). Amplía para añadir más.</p>
-          )}
-
-          {items.length === 0 ? (
-            <div className="empty">Aún no has añadido artículos. Empieza con el botón de arriba.</div>
-          ) : (
-            <div className="grid">
-              {items.map((it) => {
-                const img = it.imgs?.[0];
-                return (
-                  <article key={it.id} className={'card ' + (it.visible ? '' : 'vcard-off')}>
-                    <div className="card__media">
-                      {img ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={img} alt={it.name} loading="lazy" />
-                      ) : (
-                        <div style={ph}>🏷️</div>
-                      )}
-                      <span className={'badge badge--' + it.estado + ' card__badge'}>{estadoLabel[it.estado]}</span>
-                      <form action={toggleItem} className={'vswitch vswitch--' + (it.visible ? 'on' : 'off')}>
-                        <input type="hidden" name="id" value={it.id} />
-                        <input type="hidden" name="visible" value={String(it.visible)} />
-                        <button type="submit"><span className="vknob" />{it.visible ? 'ON' : 'APAGADO'}</button>
-                      </form>
-                    </div>
-                    <div className="card__body">
-                      <div className="card__name">{it.name}</div>
-                      {(it.brand || it.dims) && <div className="card__meta">{[it.brand, it.dims].filter(Boolean).join(' · ')}</div>}
-                      <div className="card__price">{formatPrice(it.price)}</div>
-                      <details style={{ marginTop: 4 }}>
-                        <summary style={{ cursor: 'pointer', fontSize: 13, color: 'var(--blue)', fontWeight: 600 }}>Editar</summary>
-                        <form action={editarItem} style={{ ...formGrid, marginTop: 8 }}>
-                          <input type="hidden" name="id" value={it.id} />
-                          <input name="name" defaultValue={it.name} placeholder="Nombre" style={inp} />
-                          <input name="price" type="number" defaultValue={it.price ?? ''} placeholder="Precio" style={{ ...inp, maxWidth: 110 }} />
-                          <select name="estado" defaultValue={it.estado} style={{ ...inp, maxWidth: 140 }}>
-                            <option value="disp">Disponible</option>
-                            <option value="apar">Apartado</option>
-                            <option value="vend">Vendido</option>
-                          </select>
-                          <input name="brand" defaultValue={it.brand ?? ''} placeholder="Marca" style={{ ...inp, maxWidth: 120 }} />
-                          <input name="dims" defaultValue={it.dims ?? ''} placeholder="Medidas" style={{ ...inp, maxWidth: 120 }} />
-                          <input name="note" defaultValue={it.note ?? ''} placeholder="Descripción" style={inp} />
-                          <button type="submit" className="btn btn--primary" style={{ padding: '8px 14px' }}>Guardar</button>
-                        </form>
-                      </details>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        <section className="vpanel vpanel-cfg">
-          <h2 style={{ fontSize: 20, marginBottom: 14 }}>Configuración de tu tienda</h2>
-          <form action={guardarTienda} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 460 }}>
-            <label style={lbl}>Nombre de la tienda<input name="name" defaultValue={seller.name ?? ''} style={inpFull} /></label>
-            <label style={lbl}>Título (cabecera)<input name="title" defaultValue={seller.title ?? ''} placeholder="Ej: Mi venta de garaje" style={inpFull} /></label>
-            <label style={lbl}>Subtítulo<input name="subtitle" defaultValue={seller.subtitle ?? ''} placeholder="Ej: Todo debe irse" style={inpFull} /></label>
-            <label style={lbl}>WhatsApp (con indicativo)<input name="whatsapp" defaultValue={seller.whatsapp ?? ''} placeholder="Ej: 573001234567" style={inpFull} /></label>
-            <button type="submit" className="btn btn--primary" style={{ alignSelf: 'flex-start', padding: '11px 22px' }}>Guardar cambios</button>
-          </form>
-          <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1.5px solid var(--line)' }}>
-            <a href={'/' + seller.slug} target="_blank" rel="noopener noreferrer" className="btn btn--ghost">Ver mi catálogo público</a>
-            <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 12 }}>Plan {seller.plan || '—'} · plantilla {seller.template || 'vibrante'} · {limit} artículos</p>
-            <p style={{ color: 'var(--ink-soft)', fontSize: 12, marginTop: 6 }}>Las fotos y la elección de plantilla/colores llegan en el siguiente avance.</p>
-          </div>
-        </section>
-
-        <section className="vpanel vpanel-cta">
-          <h2 style={{ fontSize: 20, marginBottom: 6 }}>Registrar una venta</h2>
-          <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginBottom: 12 }}>Marca si te pagaron o no. Sin justificantes.</p>
-          <form action={registrarVenta} style={formGrid}>
-            <input name="item" list="lista-items" placeholder="Artículo" style={inp} />
-            <datalist id="lista-items">
-              {items.map((it) => <option key={it.id} value={it.name} />)}
-            </datalist>
-            <input name="amount" type="number" placeholder="Monto" required style={{ ...inp, maxWidth: 120 }} />
-            <input name="qty" type="number" defaultValue={1} placeholder="Cant." style={{ ...inp, maxWidth: 80 }} />
-            <select name="pagado" defaultValue="si" style={{ ...inp, maxWidth: 140 }}>
-              <option value="si">Pagado: Sí</option>
-              <option value="no">Pagado: No</option>
-            </select>
-            <input name="buyer" placeholder="Comprador (opcional)" style={inp} />
-            <button type="submit" className="btn btn--primary" style={{ padding: '10px 18px' }}>Registrar</button>
-          </form>
-
-          {ventas.length > 0 && (
-            <div style={{ marginTop: 22 }}>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
-                <Stat label="Vendido" value={formatPrice(totalVendido)} />
-                <Stat label="Cobrado" value={formatPrice(totalCobrado)} />
-                <Stat label="Ventas" value={String(ventas.length)} />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {ventas.map((v) => {
-                  const pend = (v.amount || 0) - (v.paid || 0);
-                  return (
-                    <div key={v.id} style={row}>
-                      <span style={{ fontWeight: 600 }}>{v.item_name || 'Venta'}{v.buyer ? ' · ' + v.buyer : ''}</span>
-                      <span style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                        {pend > 0 && <span className="badge badge--apar">Debe {formatPrice(pend)}</span>}
-                        <span style={{ fontFamily: 'var(--display)', fontWeight: 700 }}>{formatPrice(v.amount)}</span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </section>
-      </div>
-    </main>
-  );
-}
-
-const formGrid: React.CSSProperties = { display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12, alignItems: 'center' };
-const inp: React.CSSProperties = { border: '1.5px solid var(--line)', borderRadius: 'var(--r-btn)', padding: '10px 12px', fontSize: 14, fontFamily: 'var(--body)', background: '#fff', flex: '1 1 140px', minWidth: 0 };
-const inpFull: React.CSSProperties = { border: '1.5px solid var(--line)', borderRadius: 'var(--r-btn)', padding: '10px 12px', fontSize: 14, fontFamily: 'var(--body)', background: '#fff', width: '100%', marginTop: 5 };
-const lbl: React.CSSProperties = { fontSize: 13, fontWeight: 600, color: 'var(--ink-soft)', fontFamily: 'var(--display)' };
-const ph: React.CSSProperties = { height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--blue)', fontSize: 34 };
-const row: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, background: 'var(--card)', borderRadius: 'var(--r-btn)', padding: '12px 16px', boxShadow: 'var(--shadow)' };
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{ background: 'var(--card)', borderRadius: 'var(--r-btn)', padding: '12px 18px', boxShadow: 'var(--shadow)', minWidth: 110 }}>
-      <div style={{ fontSize: 12, color: 'var(--ink-soft)', fontWeight: 600 }}>{label}</div>
-      <div style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 18 }}>{value}</div>
-    </div>
-  );
+export default function Panel() {
+  useEffect(() => {
+    let done = false;
+    const supabase = createClient();
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { window.location.href = '/app/login'; return; }
+      const { data: seller } = await supabase.from('sellers').select('*').eq('user_id', user.id).maybeSingle();
+      const root = document.getElementById('vroot');
+      if (!seller) { if (root) root.innerHTML = '<div style="padding:48px 20px;font-family:Poppins,sans-serif;color:#5A6A8C">Tu cuenta aún no tiene catálogo. Lo estamos configurando.</div>'; return; }
+      const { data: items } = await supabase.from('items').select('*').eq('seller_id', (seller as any).id).order('created_at', { ascending: false });
+      const { data: ventas } = await supabase.from('ventas').select('*').eq('seller_id', (seller as any).id).order('created_at', { ascending: false }).limit(50);
+      const em = (e: string) => e === 'apar' ? 'hold' : (e === 'vend' ? 'vend' : 'ok');
+      (window as any).__VLDATA = {
+        store: (seller as any).name || 'Mi tienda',
+        slug: 'vendeloo.shop/' + (seller as any).slug,
+        metodos: ['Nequi', 'Daviplata', 'PSE', 'Bre-B', 'Bancolombia', 'Transfiya', 'Bizum', 'PayPal', 'Efectivo'],
+        items: ((items as any[]) || []).map((it) => ({ id: it.id, n: it.name, p: '$' + (it.price || 0).toLocaleString('es-CO'), imgs: (it.imgs && it.imgs.length) ? it.imgs : ['1595777457583-95e059d581b8'], s: em(it.estado), on: it.visible !== false, mar: it.brand || '', med: it.dims || '', d: it.note || '', qty: it.qty || 1, un: it.unidad || 'unidad', dsc: it.descuento || 0 })),
+        sales: ((ventas as any[]) || []).map((v) => ({ id: v.id, d: v.created_at ? new Date(v.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '', c: v.buyer || '', m: v.status || '', items: [{ n: v.item_name || 'Venta', p: v.amount || 0 }], paid: v.paid || 0 })),
+      };
+      if (done) return; done = true;
+      const a = document.createElement('script'); a.textContent = SCRIPT1; document.body.appendChild(a);
+      const b = document.createElement('script'); b.textContent = SCRIPT2; document.body.appendChild(b);
+    })();
+  }, []);
+  return <div id="vroot" />;
 }
