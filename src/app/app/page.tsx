@@ -48,14 +48,17 @@ export default async function SellerHome() {
 
   return (
     <main style={{ paddingBottom: 80 }}>
-      <header style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))', color: '#fff', padding: '20px 0 26px' }}>
-        <div className="wrap" style={{ padding: '0 20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            {isOwner
-              ? <Link href="/panel" style={{ color: '#fff', fontSize: 14, fontWeight: 700, opacity: 0.92 }}>← Volver al panel</Link>
-              : <span style={{ color: '#fff', fontWeight: 800, fontFamily: 'var(--display)', opacity: 0.92 }}>Vendeloo</span>}
+      <div style={{ background: '#fff', borderBottom: '1px solid var(--line)' }}>
+        <div className="wrap" style={{ padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 72 }}>
+          <img src="/Vendeloo_horizontal.png" alt="Vendeloo" style={{ height: 44 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {isOwner && <Link href="/panel" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 700 }}>← Volver al panel</Link>}
             <SignOut />
           </div>
+        </div>
+      </div>
+      <header style={{ background: 'linear-gradient(135deg, var(--blue), var(--purple))', color: '#fff', padding: '26px 0' }}>
+        <div className="wrap" style={{ padding: '0 20px' }}>
           <h1 style={{ fontSize: 'clamp(26px,5vw,38px)', color: '#fff' }}>{seller.name}</h1>
           <a href={'/' + seller.slug} target="_blank" rel="noopener noreferrer" style={{ color: '#fff', opacity: 0.9, fontSize: 14, fontWeight: 600 }}>
             vendeloo.shop/{seller.slug} ↗
