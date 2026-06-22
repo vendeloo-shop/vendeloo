@@ -24,7 +24,7 @@ export default function LoginPage() {
       setError('No pudimos iniciar sesión. Revisa tu correo y contraseña.');
       return;
     }
-    router.push('/app');
+    router.push(email.trim().toLowerCase() === 'vendeloo.app@gmail.com' ? '/panel' : '/app');
     router.refresh();
   }
 
