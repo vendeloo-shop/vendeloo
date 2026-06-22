@@ -110,3 +110,23 @@ export async function toggleItem(formData: FormData) {
     .eq('id', id);
   revalidatePath('/app');
 }
+
+export async function guardarTienda(formData: FormData) {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth?.user) redirect('/app/login');
+  const { data: seller } = await supabase
+    .from('sellers')
+    .select('id')
+    .eq('user_id', auth.user.id)
+    .maybeSingle();
+  if (!seller) return;
+  const name = String(formData.get('name') || '').trim();
+  const title = String(formData.get('title') || '').trim() || null;
+  const subtitle = String(formData.get('subtitle') || '').trim() || null;
+  const whatsapp = String(formData.get('whatsapp') || '').trim() || null;
+  const patch: Record<string, unknown> = { title, subtitle, whatsapp };
+  if (name) patch.name = name;
+  await supabase.from('sellers').update(patch).eq('id', seller.id);
+  revalidatePath('/app');
+}
