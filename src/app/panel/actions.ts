@@ -124,6 +124,8 @@ export async function crearTiendaGratis(formData: FormData) {
   const nombre = String(formData.get('nombre') || '').trim();
   const slug = String(formData.get('slug') || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
   const plan = String(formData.get('plan') || 'medio');
+  const tipoSel = String(formData.get('tipo') || 'cortesia');
+  const tipo = tipoSel === 'propia' ? 'propia' : 'cortesia';
   const limit = PLAN_LIMITS[plan] ?? 25;
   if (!slug) {
     throw new Error('Falta el slug de la tienda');
@@ -138,7 +140,8 @@ export async function crearTiendaGratis(formData: FormData) {
     item_limit: limit,
     started_at: now.toISOString(),
     expires_at: new Date(now.getTime() + 365 * DAY).toISOString(),
-    notes: 'Cortesia',
+    tipo,
+    notes: tipo === 'propia' ? 'Propia' : 'Cortesia',
   });
   if (error) {
     throw new Error('No se pudo crear la tienda: ' + error.message);
