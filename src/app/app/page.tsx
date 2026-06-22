@@ -158,7 +158,7 @@ export default async function SellerHome() {
         <section className="vpanel vpanel-cfg">
           <h2 style={{ fontSize: 20, marginBottom: 14 }}>Configuración de tu tienda</h2>
           <form action={guardarTienda} style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 460 }}>
-            <label style={lbl}>Nombre de la tienda<input name="name" defaultValue={seller.name} style={inpFull} /></label>
+            <label style={lbl}>Nombre de la tienda<input name="name" defaultValue={seller.name ?? ''} style={inpFull} /></label>
             <label style={lbl}>Título (cabecera)<input name="title" defaultValue={seller.title ?? ''} placeholder="Ej: Mi venta de garaje" style={inpFull} /></label>
             <label style={lbl}>Subtítulo<input name="subtitle" defaultValue={seller.subtitle ?? ''} placeholder="Ej: Todo debe irse" style={inpFull} /></label>
             <label style={lbl}>WhatsApp (con indicativo)<input name="whatsapp" defaultValue={seller.whatsapp ?? ''} placeholder="Ej: 573001234567" style={inpFull} /></label>
