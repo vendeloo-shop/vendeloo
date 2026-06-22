@@ -112,6 +112,11 @@ export default async function PanelPage() {
                     </span>
                   )}
                   <span className={`badge ${badgeClass(s.status)}`}>{s.status}</span>
+                  {tipoDe(s) === 'propia' && (
+                    <Link href="/app" className="btn btn--ghost" style={{ padding: '7px 12px', fontSize: 13, background: 'var(--purple)', color: '#fff', borderColor: 'var(--purple)' }}>
+                      Abrir mi tienda
+                    </Link>
+                  )}
                   <Link href={`/panel/tienda/${s.slug}`} className="btn btn--ghost" style={{ padding: '7px 12px', fontSize: 13 }}>
                     Analítica
                   </Link>
