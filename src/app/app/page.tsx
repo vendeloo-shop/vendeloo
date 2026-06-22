@@ -13,6 +13,9 @@ export default async function SellerHome() {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth?.user) redirect('/app/login');
 
+  const OWNER_EMAIL = process.env.OWNER_EMAIL || '';
+  const isOwner = !!OWNER_EMAIL && auth.user.email?.toLowerCase() === OWNER_EMAIL.toLowerCase();
+
   const { data: sellerData } = await supabase
     .from('sellers')
     .select('*')
@@ -38,7 +41,11 @@ export default async function SellerHome() {
   return (
     <main className="wrap" style={{ padding: '32px 20px 80px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-        <Link href="/" style={{ color: 'var(--ink-soft)', fontSize: 14, fontWeight: 600 }}>Vendeloo</Link>
+        {isOwner ? (
+          <Link href="/panel" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 700 }}>Volver al panel</Link>
+        ) : (
+          <Link href="/" style={{ color: 'var(--ink-soft)', fontSize: 14, fontWeight: 600 }}>Vendeloo</Link>
+        )}
         <SignOut />
       </div>
 
