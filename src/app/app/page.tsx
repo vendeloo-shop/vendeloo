@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { Seller, Item } from '@/lib/supabase/types';
 import { formatPrice, estadoLabel } from '@/lib/format';
 import SignOut from '@/components/SignOut';
-import { registrarVenta } from './actions';
+import { registrarVenta, crearItem, editarItem, toggleItem } from './actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,31 +63,74 @@ export default async function SellerHome() {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 20 }}>Tus artículos</h2>
-            <Link className="btn btn--primary" href="/app">+ Agregar</Link>
+            <h2 style={{ fontSize: 20 }}>Tus artículos ({items.length}/{seller.item_limit})</h2>
           </div>
+
+          {items.length < (seller.item_limit || 0) ? (
+            <details style={{ marginBottom: 16 }}>
+              <summary style={{ cursor: 'pointer', fontWeight: 700, color: 'var(--blue)' }}>+ Agregar artículo</summary>
+              <form action={crearItem} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12, alignItems: 'center' }}>
+                <input name="name" placeholder="Nombre" required style={inpV} />
+                <input name="price" type="number" placeholder="Precio" style={{ ...inpV, maxWidth: 120 }} />
+                <select name="estado" defaultValue="disp" style={{ ...inpV, maxWidth: 150 }}>
+                  <option value="disp">Disponible</option>
+                  <option value="apar">Apartado</option>
+                  <option value="vend">Vendido</option>
+                </select>
+                <input name="brand" placeholder="Marca" style={{ ...inpV, maxWidth: 130 }} />
+                <input name="dims" placeholder="Medidas/talla" style={{ ...inpV, maxWidth: 130 }} />
+                <input name="note" placeholder="Descripción" style={inpV} />
+                <button type="submit" className="btn btn--primary" style={{ padding: '10px 18px' }}>Agregar</button>
+              </form>
+            </details>
+          ) : (
+            <p style={{ color: 'var(--gone)', fontSize: 13, marginBottom: 16 }}>
+              Llegaste al límite de tu plan ({seller.item_limit} artículos). Amplía tu plan para agregar más.
+            </p>
+          )}
 
           {items.length === 0 ? (
             <div className="empty">Aún no has agregado artículos. Empieza con el botón “Agregar”.</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {items.map((it) => (
-                <div key={it.id} style={rowStyle}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                    <span className={`badge badge--${it.estado}`}>{estadoLabel[it.estado]}</span>
-                    <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {it.name}
-                    </span>
+                <div key={it.id} style={{ ...rowStyle, flexDirection: 'column', alignItems: 'stretch', gap: 8, opacity: it.visible ? 1 : 0.55 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                      <span className={'badge badge--' + it.estado}>{estadoLabel[it.estado]}</span>
+                      <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{it.name}</span>
+                      {!it.visible && <span style={{ fontSize: 12, color: 'var(--gone)' }}>(apagado)</span>}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                      <span style={{ fontFamily: 'var(--display)', fontWeight: 700 }}>{formatPrice(it.price)}</span>
+                      <form action={toggleItem}>
+                        <input type="hidden" name="id" value={it.id} />
+                        <input type="hidden" name="visible" value={String(it.visible)} />
+                        <button type="submit" style={miniBtn}>{it.visible ? 'Apagar' : 'Encender'}</button>
+                      </form>
+                    </div>
                   </div>
-                  <span style={{ fontFamily: 'var(--display)', fontWeight: 700 }}>{formatPrice(it.price)}</span>
+                  <details>
+                    <summary style={{ cursor: 'pointer', fontSize: 13, color: 'var(--blue)' }}>Editar</summary>
+                    <form action={editarItem} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10, alignItems: 'center' }}>
+                      <input type="hidden" name="id" value={it.id} />
+                      <input name="name" defaultValue={it.name} placeholder="Nombre" style={inpV} />
+                      <input name="price" type="number" defaultValue={it.price ?? ''} placeholder="Precio" style={{ ...inpV, maxWidth: 120 }} />
+                      <select name="estado" defaultValue={it.estado} style={{ ...inpV, maxWidth: 150 }}>
+                        <option value="disp">Disponible</option>
+                        <option value="apar">Apartado</option>
+                        <option value="vend">Vendido</option>
+                      </select>
+                      <input name="brand" defaultValue={it.brand ?? ''} placeholder="Marca" style={{ ...inpV, maxWidth: 130 }} />
+                      <input name="dims" defaultValue={it.dims ?? ''} placeholder="Medidas/talla" style={{ ...inpV, maxWidth: 130 }} />
+                      <input name="note" defaultValue={it.note ?? ''} placeholder="Descripción" style={inpV} />
+                      <button type="submit" className="btn btn--primary" style={{ padding: '8px 14px' }}>Guardar</button>
+                    </form>
+                  </details>
                 </div>
               ))}
             </div>
           )}
-          <p style={{ color: 'var(--ink-soft)', fontSize: 13, marginTop: 24 }}>
-            La edición completa de artículos (fotos, precios, estados) llega en el siguiente avance.
-          </p>
-
           <h2 style={{ fontSize: 20, marginTop: 32, marginBottom: 12 }}>Registrar una venta</h2>
           <form action={registrarVenta} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 20 }}>
             <input name="item" list="lista-items" placeholder="Artículo" style={inpV} />
@@ -151,6 +194,16 @@ const inpV: React.CSSProperties = {
   background: '#fff',
   flex: '1 1 140px',
   minWidth: 0,
+};
+
+const miniBtn: React.CSSProperties = {
+  border: '1.5px solid var(--line)',
+  borderRadius: 'var(--r-btn)',
+  padding: '6px 12px',
+  fontSize: 13,
+  fontWeight: 600,
+  background: '#fff',
+  cursor: 'pointer',
 };
 
 function Stat({ label, value }: { label: string; value: string }) {
