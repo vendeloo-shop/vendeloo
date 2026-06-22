@@ -83,6 +83,10 @@ export default async function PanelPage() {
             <option value="medio">Medio (25)</option>
             <option value="grande">Grande (50)</option>
           </select>
+          <select name="tipo" defaultValue="cortesia" style={selStyle}>
+            <option value="cortesia">Cortesía (regalo)</option>
+            <option value="propia">Propia (mía)</option>
+          </select>
           <button type="submit" style={{ ...actBtn, background: 'var(--purple)', color: '#fff', border: 'none' }}>Crear gratis</button>
         </form>
       </details>
