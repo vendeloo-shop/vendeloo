@@ -73,7 +73,7 @@ export default async function CatalogPage(
           alignItems: 'flex-end',
           background: seller.cover_photo
             ? `linear-gradient(180deg, rgba(34,27,25,0) 30%, rgba(34,27,25,.72)), url(${seller.cover_photo}) center/cover`
-            : 'linear-gradient(135deg, var(--accent), #FF9A7A)',
+            : 'linear-gradient(135deg, var(--blue), var(--purple))',
           color: '#fff',
         }}
       >
