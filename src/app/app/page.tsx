@@ -136,25 +136,53 @@ export default function Panel() {
   useEffect(() => {
     let done = false;
     const supabase = createClient();
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { window.location.href = '/app/login'; return; }
-      const { data: seller } = await supabase.from('sellers').select('*').eq('user_id', user.id).maybeSingle();
-      const root = document.getElementById('vroot');
-      if (!seller) { if (root) root.innerHTML = '<div style="padding:48px 20px;font-family:Poppins,sans-serif;color:#5A6A8C">Tu cuenta aún no tiene catálogo. Lo estamos configurando.</div>'; return; }
-      const { data: items } = await supabase.from('items').select('*').eq('seller_id', (seller as any).id).order('created_at', { ascending: false });
-      const { data: ventas } = await supabase.from('ventas').select('*').eq('seller_id', (seller as any).id).order('created_at', { ascending: false }).limit(50);
-      const em = (e: string) => e === 'apar' ? 'hold' : (e === 'vend' ? 'vend' : 'ok');
-      (window as any).__VLDATA = {
-        store: (seller as any).name || 'Mi tienda',
-        slug: 'vendeloo.shop/' + (seller as any).slug,
-        metodos: ['Nequi', 'Daviplata', 'PSE', 'Bre-B', 'Bancolombia', 'Transfiya', 'Bizum', 'PayPal', 'Efectivo'],
-        items: ((items as any[]) || []).map((it) => ({ id: it.id, n: it.name, p: '$' + (it.price || 0).toLocaleString('es-CO'), imgs: (it.imgs && it.imgs.length) ? it.imgs : ['1595777457583-95e059d581b8'], s: em(it.estado), on: it.visible !== false, mar: it.brand || '', med: it.dims || '', d: it.note || '', qty: it.qty || 1, un: it.unidad || 'unidad', dsc: it.descuento || 0 })),
-        sales: ((ventas as any[]) || []).map((v) => ({ id: v.id, d: v.created_at ? new Date(v.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '', c: v.buyer || '', m: v.status || '', items: [{ n: v.item_name || 'Venta', p: v.amount || 0 }], paid: v.paid || 0 })),
-      };
+
+    const em = (e: string) => (e === 'apar' ? 'hold' : e === 'vend' ? 'vend' : 'ok');
+    const buildData = (seller: any, items: any[], ventas: any[], ownerMode: boolean) => ({
+      store: ((seller as any).name || 'Mi tienda') + (ownerMode ? ' \u00b7 modo due\u00f1o' : ''),
+      slug: 'vendeloo.shop/' + (seller as any).slug,
+      ownerMode,
+      metodos: ['Nequi', 'Daviplata', 'PSE', 'Bre-B', 'Bancolombia', 'Transfiya', 'Bizum', 'PayPal', 'Efectivo'],
+      items: ((items as any[]) || []).map((it) => ({ id: it.id, n: it.name, p: '$' + (it.price || 0).toLocaleString('es-CO'), imgs: (it.imgs && it.imgs.length) ? it.imgs : ['1595777457583-95e059d581b8'], s: em(it.estado), on: it.visible !== false, mar: it.brand || '', med: it.dims || '', d: it.note || '', qty: it.qty || 1, un: it.unidad || 'unidad', dsc: it.descuento || 0 })),
+      sales: ((ventas as any[]) || []).map((v) => ({ id: v.id, d: v.created_at ? new Date(v.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '', c: v.buyer || '', m: v.status || '', items: [{ n: v.item_name || 'Venta', p: v.amount || 0 }], paid: v.paid || 0 })),
+    });
+
+    const inject = () => {
       if (done) return; done = true;
       const a = document.createElement('script'); a.textContent = SCRIPT1; document.body.appendChild(a);
       const b = document.createElement('script'); b.textContent = SCRIPT2; document.body.appendChild(b);
+    };
+
+    const fail = (msg: string) => {
+      const root = document.getElementById('vroot');
+      if (root) root.innerHTML = '<div style="padding:48px 20px;font-family:Poppins,sans-serif;color:#5A6A8C">' + msg + '</div>';
+    };
+
+    (async () => {
+      const tienda = new URLSearchParams(window.location.search).get('tienda');
+
+      if (tienda) {
+        try {
+          const res = await fetch('/api/owner-store?slug=' + encodeURIComponent(tienda), { cache: 'no-store' });
+          if (res.status === 403) { window.location.href = '/panel'; return; }
+          if (!res.ok) { fail('No se pudo abrir esa tienda.'); return; }
+          const d = await res.json();
+          (window as any).__VLDATA = buildData(d.seller, d.items, d.ventas, true);
+          inject();
+        } catch {
+          fail('Error al abrir la tienda.');
+        }
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { window.location.href = '/app/login'; return; }
+      const { data: seller } = await supabase.from('sellers').select('*').eq('user_id', user.id).maybeSingle();
+      if (!seller) { fail('Tu cuenta a\u00fan no tiene cat\u00e1logo. Lo estamos configurando.'); return; }
+      const { data: items } = await supabase.from('items').select('*').eq('seller_id', (seller as any).id).order('created_at', { ascending: false });
+      const { data: ventas } = await supabase.from('ventas').select('*').eq('seller_id', (seller as any).id).order('created_at', { ascending: false }).limit(50);
+      (window as any).__VLDATA = buildData(seller, items as any[], ventas as any[], false);
+      inject();
     })();
   }, []);
   return <div id="vroot" />;
