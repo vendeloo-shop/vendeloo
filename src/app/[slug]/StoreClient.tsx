@@ -73,6 +73,10 @@ export default function StoreClient({
   };
 
   const colN = Number((seller.theme as Record<string, unknown> | null)?.cols);
+  const metodos: string[] = (() => {
+    const m = (seller.theme as Record<string, unknown> | null)?.metodos;
+    return Array.isArray(m) ? (m as unknown[]).map(String).filter(Boolean) : [];
+  })();
   const gridStyle =
     colN >= 1 && colN <= 5
       ? { gridTemplateColumns: `repeat(${colN}, minmax(0, 1fr))` }
@@ -107,7 +111,7 @@ export default function StoreClient({
         <div className="vst-infocard">
           <div className="vst-ic">💳</div>
           <div className="vst-il">Cómo pagar</div>
-          <div className="vst-iv">Lo acuerdas directo con el vendedor por WhatsApp.</div>
+          <div className="vst-iv">{metodos.length ? metodos.join(' · ') : 'Lo acuerdas directo con el vendedor por WhatsApp.'}</div>
         </div>
         <div className="vst-infocard">
           <div className="vst-ic">🚚</div>
