@@ -48,7 +48,45 @@ export async function GET(req: Request) {
       ventas = [];
     }
 
-    return NextResponse.json({ seller, items: items || [], ventas });
+    const stats = {
+      visits: 0,
+      waClicks: 0,
+      topItems: [] as { item: string; n: number }[],
+      byDay: [] as { day: string; visits: number; clicks: number }[],
+    };
+    try {
+      const { data: ev } = await admin
+        .from('stats_events')
+        .select('type,item,created_at')
+        .eq('slug', slug);
+      const events =
+        (ev as { type: string; item: string | null; created_at: string }[]) || [];
+      stats.visits = events.filter((e) => e.type === 'visit').length;
+      stats.waClicks = events.filter((e) => e.type === 'wa_click').length;
+      const ic: Record<string, number> = {};
+      events
+        .filter((e) => e.type === 'wa_click' && e.item)
+        .forEach((e) => {
+          ic[e.item as string] = (ic[e.item as string] || 0) + 1;
+        });
+      stats.topItems = Object.entries(ic)
+        .map(([item, n]) => ({ item, n }))
+        .sort((a, b) => b.n - a.n)
+        .slice(0, 5);
+      const dc: Record<string, { visits: number; clicks: number }> = {};
+      events.forEach((e) => {
+        const d = e.created_at.slice(0, 10);
+        if (!dc[d]) dc[d] = { visits: 0, clicks: 0 };
+        if (e.type === 'visit') dc[d].visits++;
+        else dc[d].clicks++;
+      });
+      stats.byDay = Object.entries(dc)
+        .map(([day, v]) => ({ day, visits: v.visits, clicks: v.clicks }))
+        .sort((a, b) => (a.day < b.day ? 1 : -1))
+        .slice(0, 14);
+    } catch {}
+
+    return NextResponse.json({ seller, items: items || [], ventas, stats });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json({ error: 'EXC: ' + msg }, { status: 500 });
