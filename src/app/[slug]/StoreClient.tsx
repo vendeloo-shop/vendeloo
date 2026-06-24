@@ -102,7 +102,7 @@ export default function StoreClient({
           🛒 Pedido{cart.length > 0 && <span className="vst-cb">{cart.length}</span>}
         </button>
         <div className="vst-kick">🛍️ {seller.name}</div>
-        <h1 className="vst-h1">{seller.title || seller.name}</h1>
+        <h1 className="vst-h1">{seller.name}</h1>
         {seller.subtitle && <p className="vst-sub">{seller.subtitle}</p>}
       </header>
 
