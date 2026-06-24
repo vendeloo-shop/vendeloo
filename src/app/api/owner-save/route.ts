@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     if (typeof body.name === 'string') patch.name = body.name;
     if (typeof body.subtitle === 'string') patch.subtitle = body.subtitle;
     if (typeof body.whatsapp === 'string') patch.whatsapp = body.whatsapp;
-    if (typeof body.template === 'string') patch.template = body.template;
+    // template tiene FK a la tabla de plantillas; no se actualiza aqui por ahora
 
     const { error } = await admin.from('sellers').update(patch).eq('slug', slug);
     if (error) return NextResponse.json({ error: 'update: ' + error.message }, { status: 500 });
