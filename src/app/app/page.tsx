@@ -27,7 +27,7 @@ window.VL={
   {n:'Chaqueta de cuero',p:'$120.000',imgs:['1551028719-00167b16eac5','1521223890158-f9f7c3d5d504'],s:'ok',on:true,mar:'Zara',med:'M',d:'Cuero auténtico, apenas usada.',qty:1,un:'unidad',dsc:15},
   {n:'Zapatos de cuero',p:'$85.000',imgs:['1605733160314-4fc7dac4bb16','1542291026-7eec264c27ff'],s:'ok',on:true,mar:'',med:'42',d:'Suela en buen estado.',qty:1,un:'par',dsc:0},
   {n:'Bolso de mano',p:'$75.000',imgs:['1598532163257-ae3c6b2524b6','1584917865442-de89df76afd3'],s:'ok',on:true,mar:'',med:'',d:'Espacioso.',qty:1,un:'unidad',dsc:0},
-  {n:'Vestido',p:'$60.000',imgs:[PH],s:'hold',on:true,mar:'Mango',med:'S',d:'Ideal para eventos.',qty:1,un:'unidad',dsc:0},
+  {n:'Vestido',p:'$60.000',imgs:['1595777457583-95e059d581b8'],s:'hold',on:true,mar:'Mango',med:'S',d:'Ideal para eventos.',qty:1,un:'unidad',dsc:0},
   {n:'Chaqueta vintage',p:'$95.000',imgs:['1521223890158-f9f7c3d5d504','1551028719-00167b16eac5'],s:'ok',on:false,mar:'',med:'L',d:'Estilo retro.',qty:1,un:'unidad',dsc:0},
   {n:'Bolso pequeño',p:'$50.000',imgs:['1584917865442-de89df76afd3','1598532163257-ae3c6b2524b6'],s:'ok',on:true,mar:'',med:'',d:'Perfecto para salir.',qty:3,un:'unidad',dsc:0}
  ],
@@ -147,7 +147,7 @@ export default function Panel() {
       plan: (function(){ var pl=(seller as any).plan; var nom=({basico:'Plan B\u00e1sico',medio:'Plan Medio',grande:'Plan Grande'} as any)[pl]||('Plan '+(pl||'')); var exp=(seller as any).expires_at; var dias=exp?Math.max(0,Math.ceil((new Date(exp).getTime()-Date.now())/86400000)):null; var vence=exp?new Date(exp).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):''; return { nombre: nom, limite: (seller as any).item_limit||0, usados: ((items as any[])||[]).length, vence: vence, dias: dias }; })(),
       ownerMode,
       metodos: ['Nequi', 'Daviplata', 'PSE', 'Bre-B', 'Bancolombia', 'Transfiya', 'Bizum', 'PayPal', 'Efectivo'],
-      items: ((items as any[]) || []).map((it) => ({ id: it.id, n: it.name, p: '$' + (it.price || 0).toLocaleString('es-CO'), imgs: (it.imgs && it.imgs.length) ? it.imgs : ['1595777457583-95e059d581b8'], s: em(it.estado), on: it.visible !== false, mar: it.brand || '', med: it.dims || '', d: it.note || '', qty: it.qty || 1, un: it.unidad || 'unidad', dsc: it.descuento || 0 })),
+      items: ((items as any[]) || []).map((it) => ({ id: it.id, n: it.name, p: '$' + (it.price || 0).toLocaleString('es-CO'), imgs: (it.imgs && it.imgs.length) ? it.imgs : [PH], s: em(it.estado), on: it.visible !== false, mar: it.brand || '', med: it.dims || '', d: it.note || '', qty: it.qty || 1, un: it.unidad || 'unidad', dsc: it.descuento || 0 })),
       sales: ((ventas as any[]) || []).map((v) => ({ id: v.id, d: v.created_at ? new Date(v.created_at).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '', c: v.buyer || '', m: v.status || '', items: [{ n: v.item_name || 'Venta', p: v.amount || 0 }], paid: v.paid || 0 })),
     });
 
