@@ -36,7 +36,7 @@ window.VL={
   {d:'15 jun',c:'Ana Torres',m:'Bancolombia',items:[{n:'Bolso de mano',p:75000},{n:'Vestido',p:60000}],paid:60000}
  ]
 };
-if(window.__VLDATA){var D=window.__VLDATA;window.VL.STORE=D.store;window.VL.SLUG=D.slug;window.VL.ITEMS=D.items;window.VL.SALES=D.sales;if(D.metodos&&D.metodos.length){window.VL.METODOS=D.metodos;}if(D.perfil){window.VL.PERFIL=D.perfil;}if(D.plan){window.VL.PLAN=D.plan;}}
+if(window.__VLDATA){var D=window.__VLDATA;window.VL.STORE=D.store;window.VL.SLUG=D.slug;window.VL.ITEMS=D.items;window.VL.SALES=D.sales;if(D.metodos&&D.metodos.length){window.VL.METODOS=D.metodos;}if(D.perfil){window.VL.PERFIL=D.perfil;}if(D.plan){window.VL.PLAN=D.plan;}window.VL.OWNER=D.ownerMode;if(D.slugRaw){window.VL.SLUGRAW=D.slugRaw;}}
 var ST={ok:{t:'Disponible',c:'#11936A',b:'#DFF3EC'},hold:{t:'Apartado',c:'#B5780B',b:'#FCEFD0'},vend:{t:'Vendido',c:'#5A6A8C',b:'#EAEDF5'},agot:{t:'Agotado temp.',c:'#9A7400',b:'#FFF8E6'},disc:{t:'Discontinuado',c:'#5A6A8C',b:'#EAEDF5'}};
 function money(a){return '$'+(a||0).toLocaleString('es-CO');}
 function num(s){return +String(s).replace(/[^0-9]/g,'')||0;}
@@ -124,7 +124,7 @@ document.querySelectorAll('#picks .pk').forEach(function(c){c.onchange=saleTotal
 document.getElementById('ssave').onclick=function(){var items=[];document.querySelectorAll('#picks .pk:checked').forEach(function(c){items.push({n:c.parentNode.querySelector('span').textContent,p:+c.getAttribute('data-p')});});if(!items.length){alert('Marca al menos un artículo.');return;}window.VL.SALES.push({d:new Date().getDate()+' jun',c:val('scl')||'Comprador',m:val('smt'),items:items,paid:num(val('spaid'))});close('salemodal');drawSales();go('cuentas');};
 document.getElementById('bsend').onclick=function(){window.VL.CART.forEach(function(x){var it=itemByName(x.n);if(it&&it.s==='ok'&&x.qty>=(it.qty||1))it.s='hold';});close('buyermodal');alert('✅ Pedido recibido.\n\nCuando el vendedor verifique tu pago se pondrá en contacto. Dudas por WhatsApp.\n\n→ Los artículos quedan APARTADOS.');window.VL.CART=[];renderTienda();};
 document.getElementById('dlcsv').onclick=csv;
-document.getElementById('cfgsave').onclick=function(){alert('Configuración guardada. Míralo en "Mi tienda".');};
+document.getElementById('cfgsave').onclick=function(){if(window.VL.OWNER){var btn=this;var old=btn.textContent;btn.textContent='Guardando…';btn.disabled=true;var payload={slug:window.VL.SLUGRAW,name:val('cfgName'),subtitle:val('cfgDesc'),whatsapp:val('cfgWA'),template:val('cfgTpl'),cols:cfgCols(),metodos:cfgPays()};fetch('/api/owner-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json();}).then(function(d){btn.textContent=old;btn.disabled=false;if(d&&d.ok){alert('Configuración guardada y publicada en tu tienda.');}else{alert('No se pudo guardar: '+((d&&d.error)||'error'));}}).catch(function(e){btn.textContent=old;btn.disabled=false;alert('Error al guardar: '+e);});}else{alert('Configuración guardada. Míralo en "Mi tienda".');}};
 document.getElementById('vercat').onclick=function(){go('tienda');};var __cc=document.getElementById('cfgcopy');if(__cc)__cc.onclick=function(){try{navigator.clipboard.writeText('https://'+window.VL.SLUG);}catch(e){}__cc.textContent='Copiado!';setTimeout(function(){__cc.textContent='Copiar';},1500);};
 document.getElementById('cols').onclick=function(e){var b=e.target.closest('.colbtn');if(!b)return;document.querySelectorAll('#cols .colbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');};
 document.querySelectorAll('.devbtn').forEach(function(b){b.onclick=function(){window.VL.DEV=b.getAttribute('data-d');document.querySelectorAll('.devbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');renderTienda();};});
@@ -143,6 +143,7 @@ export default function Panel() {
     const buildData = (seller: any, items: any[], ventas: any[], ownerMode: boolean) => ({
       store: ((seller as any).name || 'Mi tienda') + (ownerMode ? ' \u00b7 modo due\u00f1o' : ''),
       slug: 'vendeloo.shop/' + (seller as any).slug,
+      slugRaw: (seller as any).slug,
       perfil: { nombre: (seller as any).name || '', correo: (seller as any).email || '', doc: '', pais: 'Colombia' },
       plan: (function(){ var pl=(seller as any).plan; var nom=({basico:'Plan B\u00e1sico',medio:'Plan Medio',grande:'Plan Grande'} as any)[pl]||('Plan '+(pl||'')); var exp=(seller as any).expires_at; var dias=exp?Math.max(0,Math.ceil((new Date(exp).getTime()-Date.now())/86400000)):null; var vence=exp?new Date(exp).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):''; return { nombre: nom, limite: (seller as any).item_limit||0, usados: ((items as any[])||[]).length, vence: vence, dias: dias }; })(),
       ownerMode,
