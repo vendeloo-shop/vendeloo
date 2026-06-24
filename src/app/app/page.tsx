@@ -144,7 +144,7 @@ export default function Panel() {
       store: ((seller as any).name || 'Mi tienda') + (ownerMode ? ' \u00b7 modo due\u00f1o' : ''),
       slug: 'vendeloo.shop/' + (seller as any).slug,
       slugRaw: (seller as any).slug,
-      perfil: { nombre: (seller as any).name || '', correo: (seller as any).email || '', doc: '', pais: 'Colombia' },
+      perfil: (function(){ var pf=(((seller as any).theme)&&((seller as any).theme.perfil))||{}; return { nombre: pf.nombre||'', correo: pf.correo||((seller as any).email||''), doc: pf.doc||'', pais: pf.pais||'Colombia' }; })(),
       plan: (function(){ var pl=(seller as any).plan; var nom=({basico:'Plan B\u00e1sico',medio:'Plan Medio',grande:'Plan Grande'} as any)[pl]||('Plan '+(pl||'')); var exp=(seller as any).expires_at; var dias=exp?Math.max(0,Math.ceil((new Date(exp).getTime()-Date.now())/86400000)):null; var vence=exp?new Date(exp).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):''; return { nombre: nom, limite: (seller as any).item_limit||0, usados: ((items as any[])||[]).length, vence: vence, dias: dias }; })(),
       ownerMode,
       metodos: ['Nequi', 'Daviplata', 'PSE', 'Bre-B', 'Bancolombia', 'Transfiya', 'Bizum', 'PayPal', 'Efectivo'],
