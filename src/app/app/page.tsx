@@ -19,7 +19,7 @@ var __r=document.getElementById('vroot');document.open=function(){};document.clo
 try{
 var V='https://vendeloo.vercel.app/Vendeloo_horizontal.png';
 function P(id,w,h){return 'https://images.unsplash.com/photo-'+id+'?auto=format&fit=crop&w='+w+'&h='+h+'&q=72';}
-function IMG(x,w,h){return (String(x).indexOf('http')===0||String(x).indexOf('blob:')===0)?x:P(x,w,h);}
+function IMG(x,w,h){return (String(x).indexOf('http')===0||String(x).indexOf('blob:')===0||String(x).indexOf('data:')===0)?x:P(x,w,h);}
 window.VL={
  METODOS:['Nequi','Daviplata','PSE','Bre-B','Bancolombia','Transfiya','Bizum','PayPal','Efectivo'],
  STORE:'El Clóset de Caro',SLUG:'vendeloo.shop/elclosetdecaro',editIdx:null,DEV:'web',CART:[],tmpImgs:[],
@@ -27,7 +27,7 @@ window.VL={
   {n:'Chaqueta de cuero',p:'$120.000',imgs:['1551028719-00167b16eac5','1521223890158-f9f7c3d5d504'],s:'ok',on:true,mar:'Zara',med:'M',d:'Cuero auténtico, apenas usada.',qty:1,un:'unidad',dsc:15},
   {n:'Zapatos de cuero',p:'$85.000',imgs:['1605733160314-4fc7dac4bb16','1542291026-7eec264c27ff'],s:'ok',on:true,mar:'',med:'42',d:'Suela en buen estado.',qty:1,un:'par',dsc:0},
   {n:'Bolso de mano',p:'$75.000',imgs:['1598532163257-ae3c6b2524b6','1584917865442-de89df76afd3'],s:'ok',on:true,mar:'',med:'',d:'Espacioso.',qty:1,un:'unidad',dsc:0},
-  {n:'Vestido',p:'$60.000',imgs:['1595777457583-95e059d581b8'],s:'hold',on:true,mar:'Mango',med:'S',d:'Ideal para eventos.',qty:1,un:'unidad',dsc:0},
+  {n:'Vestido',p:'$60.000',imgs:[PH],s:'hold',on:true,mar:'Mango',med:'S',d:'Ideal para eventos.',qty:1,un:'unidad',dsc:0},
   {n:'Chaqueta vintage',p:'$95.000',imgs:['1521223890158-f9f7c3d5d504','1551028719-00167b16eac5'],s:'ok',on:false,mar:'',med:'L',d:'Estilo retro.',qty:1,un:'unidad',dsc:0},
   {n:'Bolso pequeño',p:'$50.000',imgs:['1584917865442-de89df76afd3','1598532163257-ae3c6b2524b6'],s:'ok',on:true,mar:'',med:'',d:'Perfecto para salir.',qty:3,un:'unidad',dsc:0}
  ],
@@ -36,7 +36,7 @@ window.VL={
   {d:'15 jun',c:'Ana Torres',m:'Bancolombia',items:[{n:'Bolso de mano',p:75000},{n:'Vestido',p:60000}],paid:60000}
  ]
 };
-if(window.__VLDATA){var D=window.__VLDATA;window.VL.STORE=D.store;window.VL.SLUG=D.slug;window.VL.ITEMS=D.items;window.VL.SALES=D.sales;if(D.metodos&&D.metodos.length){window.VL.METODOS=D.metodos;}}
+if(window.__VLDATA){var D=window.__VLDATA;window.VL.STORE=D.store;window.VL.SLUG=D.slug;window.VL.ITEMS=D.items;window.VL.SALES=D.sales;if(D.metodos&&D.metodos.length){window.VL.METODOS=D.metodos;}if(D.perfil){window.VL.PERFIL=D.perfil;}if(D.plan){window.VL.PLAN=D.plan;}}
 var ST={ok:{t:'Disponible',c:'#11936A',b:'#DFF3EC'},hold:{t:'Apartado',c:'#B5780B',b:'#FCEFD0'},vend:{t:'Vendido',c:'#5A6A8C',b:'#EAEDF5'},agot:{t:'Agotado temp.',c:'#9A7400',b:'#FFF8E6'},disc:{t:'Discontinuado',c:'#5A6A8C',b:'#EAEDF5'}};
 function money(a){return '$'+(a||0).toLocaleString('es-CO');}
 function num(s){return +String(s).replace(/[^0-9]/g,'')||0;}
@@ -129,6 +129,7 @@ document.getElementById('vercat').onclick=function(){go('tienda');};var __cc=doc
 document.getElementById('cols').onclick=function(e){var b=e.target.closest('.colbtn');if(!b)return;document.querySelectorAll('#cols .colbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');};
 document.querySelectorAll('.devbtn').forEach(function(b){b.onclick=function(){window.VL.DEV=b.getAttribute('data-d');document.querySelectorAll('.devbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');renderTienda();};});
 drawItems();drawSales();
+(function applyReal(){try{var PF=window.VL.PERFIL,PL=window.VL.PLAN;if(PL){var pl=document.querySelector('.plancard .pl');if(pl)pl.textContent=PL.nombre;var pm=document.querySelector('.plancard .pm');if(pm)pm.textContent='Hasta '+PL.limite+' art\u00edculos'+(PL.vence?(' \u00b7 vence el '+PL.vence+(PL.dias!=null?(' ('+PL.dias+' d\u00edas)'):'')):'');var lim=document.querySelector('#p-cat .limit');if(lim){var lb=lim.querySelector('b');if(lb)lb.textContent=PL.usados+' de '+PL.limite+' art\u00edculos';var bi=lim.querySelector('.bar i');if(bi)bi.style.width=Math.min(100,Math.round((PL.usados/Math.max(1,PL.limite))*100))+'%';var sp=lim.querySelector('span');if(sp)sp.innerHTML=PL.dias!=null?('Vence en <b>'+PL.dias+' d\u00edas</b>'):'';}}if(PF){document.querySelectorAll('#p-config input').forEach(function(i){if(i.value==='Carolina Restrepo'){i.value=PF.nombre||'';i.placeholder='Tu nombre o el de tu tienda';}else if(i.value==='C.C. 1020304050'){i.value=PF.doc||'';i.placeholder='Documento (opcional)';}else if(i.value==='caro@ejemplo.com'){i.value=PF.correo||'';i.placeholder='Tu correo';}});}}catch(e){}})();
 }catch(err){document.body.innerHTML='<pre style=padding:20px>ERROR: '+err.message+'</pre>';}
 })();`;
 
@@ -138,9 +139,12 @@ export default function Panel() {
     const supabase = createClient();
 
     const em = (e: string) => (e === 'apar' ? 'hold' : e === 'vend' ? 'vend' : 'ok');
+    const PH = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='220'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231565FF'/%3E%3Cstop offset='1' stop-color='%236D3DFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='300' height='220' fill='url(%23g)'/%3E%3C/svg%3E";
     const buildData = (seller: any, items: any[], ventas: any[], ownerMode: boolean) => ({
       store: ((seller as any).name || 'Mi tienda') + (ownerMode ? ' \u00b7 modo due\u00f1o' : ''),
       slug: 'vendeloo.shop/' + (seller as any).slug,
+      perfil: { nombre: (seller as any).name || '', correo: (seller as any).email || '', doc: '', pais: 'Colombia' },
+      plan: (function(){ var pl=(seller as any).plan; var nom=({basico:'Plan B\u00e1sico',medio:'Plan Medio',grande:'Plan Grande'} as any)[pl]||('Plan '+(pl||'')); var exp=(seller as any).expires_at; var dias=exp?Math.max(0,Math.ceil((new Date(exp).getTime()-Date.now())/86400000)):null; var vence=exp?new Date(exp).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):''; return { nombre: nom, limite: (seller as any).item_limit||0, usados: ((items as any[])||[]).length, vence: vence, dias: dias }; })(),
       ownerMode,
       metodos: ['Nequi', 'Daviplata', 'PSE', 'Bre-B', 'Bancolombia', 'Transfiya', 'Bizum', 'PayPal', 'Efectivo'],
       items: ((items as any[]) || []).map((it) => ({ id: it.id, n: it.name, p: '$' + (it.price || 0).toLocaleString('es-CO'), imgs: (it.imgs && it.imgs.length) ? it.imgs : ['1595777457583-95e059d581b8'], s: em(it.estado), on: it.visible !== false, mar: it.brand || '', med: it.dims || '', d: it.note || '', qty: it.qty || 1, un: it.unidad || 'unidad', dsc: it.descuento || 0 })),
