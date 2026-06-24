@@ -72,6 +72,12 @@ export default function StoreClient({
     )}`;
   };
 
+  const colN = Number((seller.theme as Record<string, unknown> | null)?.cols);
+  const gridStyle =
+    colN >= 1 && colN <= 5
+      ? { gridTemplateColumns: `repeat(${colN}, minmax(0, 1fr))` }
+      : undefined;
+
   const sel = selected;
   const selGrad = sel ? gradOf(sel.ref || sel.id) : (['#1565FF', '#6D3DFF'] as const);
 
@@ -112,7 +118,7 @@ export default function StoreClient({
 
       {/* Rejilla */}
       <div className="vst-count">{items.length} artículos</div>
-      <div className="vst-grid">
+      <div className="vst-grid" style={gridStyle}>
         {items.map((it) => {
           const sold = it.estado === 'vend';
           const img = it.imgs?.[0];
@@ -305,13 +311,13 @@ const CSS = `
 .vst-kick{display:inline-block;font-family:Montserrat;font-weight:700;font-size:12px;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);padding:5px 13px;border-radius:99px;margin-bottom:12px}
 .vst-h1{font-size:clamp(26px,6vw,40px);font-weight:800;max-width:640px;margin:0 auto}
 .vst-sub{font-size:15px;opacity:.93;max-width:560px;margin:10px auto 0}
-.vst-info{max-width:980px;margin:0 auto;display:flex;gap:12px;padding:16px 16px 4px;flex-wrap:wrap}
+.vst-info{max-width:1200px;margin:0 auto;display:flex;gap:12px;padding:16px 16px 4px;flex-wrap:wrap}
 .vst-infocard{flex:1;min-width:200px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .vst-ic{font-size:18px}
 .vst-il{font-family:Montserrat;font-weight:700;font-size:12px;color:var(--soft);text-transform:uppercase;letter-spacing:.04em;margin:4px 0 5px}
 .vst-iv{font-size:13.5px;line-height:1.5}
-.vst-count{max-width:980px;margin:0 auto;color:var(--soft);font-size:13px;padding:14px 18px 4px}
-.vst-grid{max-width:980px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:6px 16px 40px}
+.vst-count{max-width:1200px;margin:0 auto;color:var(--soft);font-size:13px;padding:14px 18px 4px}
+.vst-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:6px 16px 40px}
 .vst-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s}
 .vst-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(7,26,82,.13)}
 .vst-card.is-sold .vst-media{filter:grayscale(.7);opacity:.65}
