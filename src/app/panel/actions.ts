@@ -148,3 +148,25 @@ export async function crearTiendaGratis(formData: FormData) {
   }
   revalidatePath('/panel');
 }
+
+export async function aprobarSolicitud(formData: FormData) {
+  const id = String(formData.get('id') || '');
+  if (!id) return;
+  await ownerClient();
+  const admin = createAdminClient();
+  const now = new Date().toISOString();
+  await admin
+    .from('signups')
+    .update({ status: 'aprobado', activated_at: now, paid_at: now })
+    .eq('id', id);
+  revalidatePath('/panel');
+}
+
+export async function rechazarSolicitud(formData: FormData) {
+  const id = String(formData.get('id') || '');
+  if (!id) return;
+  await ownerClient();
+  const admin = createAdminClient();
+  await admin.from('signups').update({ status: 'rechazado' }).eq('id', id);
+  revalidatePath('/panel');
+}
