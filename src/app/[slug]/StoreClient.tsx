@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Seller, Item } from '@/lib/supabase/types';
 import { formatPrice, estadoLabel, waLink } from '@/lib/format';
 
@@ -56,6 +56,27 @@ export default function StoreClient({
   const [selected, setSelected] = useState<Item | null>(null);
   const [cart, setCart] = useState<string[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+
+  const track = (type: string, item?: string) => {
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: seller.slug, type, item: item ?? null }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch {}
+  };
+  useEffect(() => {
+    try {
+      fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: seller.slug, type: 'visit' }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch {}
+  }, [seller.slug]);
 
   const inCart = (id: string) => cart.includes(id);
   const add = (id: string) => setCart((c) => (c.includes(id) ? c : [...c, id]));
@@ -225,6 +246,7 @@ export default function StoreClient({
               <div className="vst-mactions">
                 <a
                   className="vst-wa"
+                  onClick={() => track('wa_click', sel.name)}
                   href={waLink(
                     seller.whatsapp,
                     `Hola ${seller.name ?? ''}, me interesa "${sel.name}" (${formatPrice(
@@ -285,6 +307,7 @@ export default function StoreClient({
                 </div>
                 <a
                   className="vst-save vst-block"
+                  onClick={() => track('wa_click', 'pedido')}
                   href={waLink(seller.whatsapp, orderMessage())}
                   target="_blank"
                   rel="noopener noreferrer"
