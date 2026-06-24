@@ -32,6 +32,7 @@ export async function POST(req: Request) {
     );
     if (body.cols != null) theme.cols = Number(body.cols);
     if (Array.isArray(body.metodos)) theme.metodos = body.metodos;
+    if (body.envio && typeof body.envio === 'object') theme.envio = body.envio;
     if (body.perfil && typeof body.perfil === 'object') theme.perfil = body.perfil;
 
     const patch: Record<string, unknown> = { theme };
